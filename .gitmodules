@@ -1,0 +1,3 @@
+[submodule "firrtl-operations"]
+	path = firrtl-operations
+	url = https://github.com/ucsc-vama/firrtl-operations
