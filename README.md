@@ -8,5 +8,5 @@ First run generator:
 
 Compile and run C++ code:
 
-    $ gcc Runner.cpp -lstdc++
-    $ ./a.out
+    $ make
+    $ ./Runner
