@@ -21,5 +21,10 @@ int main() {
 	assert(u1-u0 == UInt<17>("0x1f3c0"));
 	assert(u2-u3 == UInt<65>("0xb2fa076cbc49d721"));
 	assert(u3-u2 == UInt<65>("0x14d05f89343b628df"));
+
+	UInt<64> u5("0xa3901ba6fe91832a");
+	cout << u5-u5 << endl;
+	//output: 0x10000000000000000<U65>
+
 	return 0;
 }
