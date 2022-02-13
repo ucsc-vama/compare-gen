@@ -42,28 +42,17 @@ def middle(f):
 
     for ia, aval in enumerate(li):
         for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize):
+            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
                 result = aval.uint_sub(bval)
                 f.write("\tassert(u"+str(ia)+"-u"+str(ib)+" == UInt<" + str(result.bitsize) + ">(\"" + str(hex(result.value)) + "\"));\n")
 
-
-    #f.write("UInt<16>  a16u("+str(hex(a.value))+ ");\n")
-    #f.write("UInt<16>  b16u("+str(hex(b.value))+ ");\n")
-    #f.write("UInt<64>  a64u("+str(hex(c.value))+ ");\n")
-    #f.write("UInt<64>  b64u("+str(hex(d.value))+ ");\n")
-
-    #result1 = a.uint_add(b)
-    #result2 = c.uint_add(d)
-
-    #f.write("assert(a16u + b16u == UInt<" + str(result1.bitsize) + ">(\"" + str(hex(result1.value)) + "\"));\n")
-    #f.write("assert(a64u + b64u == UInt<" + str(result2.bitsize) + ">(\"" + str(hex(result2.value)) + "\"));\n")
 
     f.write("\treturn 0;\n")
     f.write("}")
 
 if __name__=="__main__":
 
-    f = open("runner.cpp", "w")
+    f = open("Runner.cpp", "w")
 
     header(f)
     middle(f)
