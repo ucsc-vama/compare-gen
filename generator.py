@@ -6,6 +6,11 @@ a = my_uint(2, 0x2)
 b = my_uint(4, 0xa)
 sum = a.uint_add(b)
 
+class operation:
+    def binary(op, func, f, a, b):
+        result = func(a,b)
+        f.write("\tassert(u"+str(0)+op+"u"+str(1)+" == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+
 def header(f):
     f.write("#include \"./firrtl-sig/uint.h\"\n")
     f.write("#include<iostream>\n")
@@ -30,74 +35,14 @@ def middle(f):
     
     for count, num in enumerate(li):
         f.write("\tUInt<" + str(num.bitsize) + "> u" + str(count) + "(\"" + str(hex(num.value)) + "\");\n")
-
     f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize):
-                result = aval.uint_add(bval)
-                f.write("\tassert(u"+str(ia)+"+u"+str(ib)+" == UInt<" + str(result.bitsize) + ">(\"" + str(hex(result.value)) + "\"));\n")
 
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                result = aval.uint_sub(bval)
-                f.write("\tassert(u"+str(ia)+"-u"+str(ib)+" == UInt<" + str(result.bitsize) + ">(\"" + str(hex(result.value)) + "\"));\n")
+    ops = {}
+    ops["+"] = my_uint.uint_add
+    ops["-"] = operation.binary
+    ops["*"] = operation.binary
 
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                result = aval.uint_mul(bval)
-                f.write("\tassert(u"+str(ia)+"*u"+str(ib)+" == UInt<" + str(result.bitsize) + ">(\"" + str(hex(result.value)) + "\"));\n")
-
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                result = aval.uint_div(bval)
-                f.write("\tassert(u"+str(ia)+"/u"+str(ib)+" == UInt<" + str(result.bitsize) + ">(\"" + str(hex(result.value)) + "\"));\n")
-
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                result = aval.uint_rem(bval)
-                f.write("\tassert(u"+str(ia)+"%u"+str(ib)+" == UInt<" + str(result.bitsize) + ">(\"" + str(hex(result.value)) + "\"));\n")
-
-    f.write("\n")
-    f.write("\tbool result;\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                myresult = aval.uint_lt(bval)
-                f.write("\tresult = u"+str(ia)+ "<u"+str(ib)+";\n")
-                f.write("\tassert("+str(myresult.value) +"==result);\n")
-
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                myresult = aval.uint_leq(bval)
-                f.write("\tresult = u"+str(ia)+ "<=u"+str(ib)+";\n")
-                f.write("\tassert("+str(myresult.value) +"==result);\n")
-
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                myresult = aval.uint_gt(bval)
-                f.write("\tresult = u"+str(ia)+ ">u"+str(ib)+";\n")
-                f.write("\tassert("+str(myresult.value) +"==result);\n")
-
-    f.write("\n")
-    for ia, aval in enumerate(li):
-        for ib, bval in enumerate(li):
-            if(aval.bitsize == bval.bitsize) and aval.value != bval.value:
-                myresult = aval.uint_geq(bval)
-                f.write("\tresult = u"+str(ia)+ ">=u"+str(ib)+";\n")
-                f.write("\tassert("+str(myresult.value) +"==result);\n")
+    operation.binary("+",ops["+"],f,a,b)
 
     f.write("\n")
     f.write("\treturn 0;\n")

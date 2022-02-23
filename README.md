@@ -11,7 +11,6 @@ Compile and run C++ code:
     $ make
     $ ./Runner
 
-
 Notes:
 * firrtl sig outputs signed bit 1 when subtracting 64bit or 128bit
 ```
@@ -19,4 +18,3 @@ Notes:
 	cout << u5-u5 << endl;
 	//output: 0x10000000000000000<U65>
 ```
-* firrtl sig only takes in 16, 64, 128bits
