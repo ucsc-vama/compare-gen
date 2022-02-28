@@ -2,21 +2,26 @@ import sys
 sys.path.insert(1, './firrtl-operations')
 from my_uint import *
 
-a = my_uint(2, 0x2)
-b = my_uint(4, 0xa)
-sum = a.uint_add(b)
-
 class operation:
-    def binary(op, func, f, a, b):
+    def declareVariable(f, name, num):
+        f.write("\tUInt<" + str(num.bitsize) + "> u" + name + "(\"" + str(hex(num.value)) + "\");\n")
+
+    def binary(f, op, ops, li, a, b):
+        func = ops[op]
         result = func(a,b)
-        f.write("\tassert(u"+str(0)+op+"u"+str(1)+" == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        f.write("\tassert(u"+str(li.index(a))+op+"u"+str(li.index(b))+" == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+
+    def unary(f, op, ops, li, a, b):
+        func = ops[op]
+        result = func(a,b)
+        f.write("\tassert("+str(result.value) +"==(u"+str(li.index(a))+op+"u"+str(li.index(b))+"));\n")
 
 def header(f):
     f.write("#include \"./firrtl-sig/uint.h\"\n")
     f.write("#include<iostream>\n")
     f.write("#include <assert.h>\n")
     f.write("#include <stdlib.h>\n")
-    f.write("using namespace std;\n")
+    f.write("using namespace std;\n\n")
 
 def middle(f):
 
@@ -33,17 +38,38 @@ def middle(f):
 
     f.write("int main() {\n")
     
+    #print test variables
     for count, num in enumerate(li):
-        f.write("\tUInt<" + str(num.bitsize) + "> u" + str(count) + "(\"" + str(hex(num.value)) + "\");\n")
+        operation.declareVariable(f, str(count), num)
     f.write("\n")
 
     ops = {}
     ops["+"] = my_uint.uint_add
-    ops["-"] = operation.binary
-    ops["*"] = operation.binary
+    ops["-"] = my_uint.uint_sub
+    ops["*"] = my_uint.uint_mul
+    ops["/"] = my_uint.uint_div
+    ops["%"] = my_uint.uint_rem
+    ops["<"] = my_uint.uint_lt
+    ops["<="] = my_uint.uint_leq
+    ops[">"] = my_uint.uint_gt
+    ops[">="] = my_uint.uint_geq
+    ops["=="] = my_uint.uint_eq
+    ops["!="] = my_uint.uint_neq
 
-    operation.binary("+",ops["+"],f,a,b)
+    operation.binary(f,"+",ops,li,a,b)
+    operation.binary(f,"-",ops,li,a,b)
+    operation.binary(f,"*",ops,li,a,b)
+    operation.binary(f,"/",ops,li,a,b)
+    operation.binary(f,"%",ops,li,a,b)
 
+    f.write("\n")
+    operation.unary(f,"<",ops,li,c,d)
+    operation.unary(f,"<=",ops,li,c,d)
+    operation.unary(f,">",ops,li,c,d)
+    operation.unary(f,">=",ops,li,c,d)
+    operation.unary(f,"==",ops,li,c,d)
+    operation.unary(f,"!=",ops,li,c,d)
+    
     f.write("\n")
     f.write("\treturn 0;\n")
     f.write("}")
