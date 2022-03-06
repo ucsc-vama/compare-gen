@@ -15,6 +15,9 @@ class operation:
     ops[">="] = my_uint.uint_geq
     ops["=="] = my_uint.uint_eq
     ops["!="] = my_uint.uint_neq
+    ops["pad"] = my_uint.uint_pad
+    ops["shl"] = my_uint.uint_shl
+    ops["shr"] = my_uint.uint_shr
 
     def declareVariable(f, num):
         f.write("\tUInt<" + str(num[1].bitsize) + "> u" + num[0] + "(\"" + str(hex(num[1].value)) + "\");\n")
@@ -28,6 +31,11 @@ class operation:
         func = operation.ops[op]
         result = func(a[1],b[1])
         f.write("\tassert("+str(result.value) +" == (u"+a[0]+op+"u"+b[0]+"));\n")
+
+    def bitwise(f, op, a, n):
+        func = operation.ops[op]
+        result = func(a[1], n)
+        f.write("\tassert(u"+a[0]+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 def top(f):
     f.write("#include \"./firrtl-sig/uint.h\"\n")
@@ -54,6 +62,10 @@ def testcase(f):
     operation.unary(f,">=",a,b)
     operation.unary(f,"==",a,b)
     operation.unary(f,"!=",a,b)
+    f.write("\n")
+    operation.bitwise(f,"pad",a,4)
+    operation.bitwise(f,"shl",a,4)
+    operation.bitwise(f,"shr",a,4)
     bottom(f)
     
 def bottom(f):
@@ -63,10 +75,7 @@ def bottom(f):
 
 if __name__=="__main__":
 
-    f = open("Runner1.cpp", "w")
-    testcase(f)
-
-    f = open("Runner2.cpp", "w")
+    f = open("Runner.cpp", "w")
     testcase(f)
 
     f.close()

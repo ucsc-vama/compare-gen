@@ -20,5 +20,9 @@ int main() {
 	assert(0 == (ua==ub));
 	assert(1 == (ua!=ub));
 
+	assert(ua.pad<4>() == UInt<16>("0xcafe"));
+	assert(ua.shl<4>() == UInt<20>("0xcafe0"));
+	assert(ua.shr<4>() == UInt<12>("0xcaf"));
+
 	return 0;
 }
