@@ -1,4 +1,6 @@
 import sys
+import os
+import subprocess
 sys.path.insert(1, './firrtl-operations')
 from my_uint import *
 
@@ -45,26 +47,23 @@ def top(f):
     f.write("using namespace std;\n\n")
     f.write("int main() {\n\n")
 
-def testcase(f):
+def testcase1(f):
     top(f)
     a = ("a", my_uint(16, 0xcafe))
     b = ("b", my_uint(16, 0xbebe))
     operation.declareVariable(f, a)
     operation.declareVariable(f, b)
-    operation.binary(f,"+",a,b)
-    operation.binary(f,"-",a,b)
-    operation.binary(f,"*",a,b)
-    operation.binary(f,"/",a,b)
-    operation.binary(f,"%",a,b)
-    operation.unary(f,"<",a,b)
-    operation.unary(f,"<=",a,b)
-    operation.unary(f,">",a,b)
-    operation.unary(f,">=",a,b)
-    operation.unary(f,"==",a,b)
-    operation.unary(f,"!=",a,b)
-    f.write("\n")
-    operation.bitwise(f,"pad",a,4)
-    operation.bitwise(f,"shl",a,4)
+    operation.bitwise(f,"shr",a,4)
+    bottom(f)
+
+def testcase2(f):
+    top(f)
+    a = ("a", my_uint(16, 0xcafe))
+    b = ("b", my_uint(16, 0xbebe))
+    operation.declareVariable(f, a)
+    operation.declareVariable(f, b)
+    operation.binary(f, "+", a, b)
+    operation.unary(f, "==", a, b)
     operation.bitwise(f,"shr",a,4)
     bottom(f)
     
@@ -73,9 +72,19 @@ def bottom(f):
     f.write("\treturn 0;\n")
     f.write("}")
 
+def runprogram(test):
+    f = open("Runner.cpp", "w")
+    test(f)
+    f.close()
+
+    subprocess.call("make")
+    subprocess.call("./Runner")
+    subprocess.call(["make", "clean"])
+    #subprocess.call(["rm", "Runner.cpp"])
+
 if __name__=="__main__":
 
-    f = open("Runner.cpp", "w")
-    testcase(f)
+    subprocess.call(["make", "clean"])
+    runprogram(testcase1)
+    runprogram(testcase2)
 
-    f.close()
