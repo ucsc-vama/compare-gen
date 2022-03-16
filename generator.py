@@ -62,12 +62,10 @@ def top(f):
     f.write("using namespace std;\n\n")
     f.write("int main() {\n\n")
 
-def testcase1(f):
-    vars = operation.genvariables(f)
+def testcase1(f, vars):
     operation.binary(f, "+", vars[0], vars[1])
 
-def testcase2(f):
-    vars = operation.genvariables(f)
+def testcase2(f, vars):
     operation.bitwise(f,"shr",vars[0],4)
     
 def bottom(f):
@@ -78,7 +76,7 @@ def bottom(f):
 def runprogram(test):
     f = open("Runner.cpp", "w")
     top(f)
-    test(f)
+    test(f, operation.genvariables(f))
     bottom(f)
     f.close()
 
