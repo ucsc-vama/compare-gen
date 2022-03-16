@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+from random import randint
 sys.path.insert(1, './firrtl-operations')
 from my_uint import *
 
@@ -21,8 +22,22 @@ class operation:
     ops["shl"] = my_uint.uint_shl
     ops["shr"] = my_uint.uint_shr
 
+    def randcreate(digitlength):
+        return randint(2**(digitlength-1), (2**digitlength)-1)
+
     def declareVariable(f, num):
         f.write("\tUInt<" + str(num[1].bitsize) + "> u" + num[0] + "(\"" + str(hex(num[1].value)) + "\");\n")
+
+    def genvariables(f):
+        bitsize = 16
+        li = []
+        li.append(("a", my_uint(bitsize, operation.randcreate(bitsize))))
+        li.append(("b", my_uint(bitsize, operation.randcreate(bitsize))))
+        li.append(("c", my_uint(bitsize, operation.randcreate(bitsize))))
+        li.append(("d", my_uint(bitsize, operation.randcreate(bitsize))))
+        for n in li:
+            operation.declareVariable(f, n)
+        return li
 
     def binary(f, op, a, b):
         func = operation.ops[op]
@@ -48,24 +63,12 @@ def top(f):
     f.write("int main() {\n\n")
 
 def testcase1(f):
-    top(f)
-    a = ("a", my_uint(16, 0xcafe))
-    b = ("b", my_uint(16, 0xbebe))
-    operation.declareVariable(f, a)
-    operation.declareVariable(f, b)
-    operation.bitwise(f,"shr",a,4)
-    bottom(f)
+    vars = operation.genvariables(f)
+    operation.binary(f, "+", vars[0], vars[1])
 
 def testcase2(f):
-    top(f)
-    a = ("a", my_uint(16, 0xcafe))
-    b = ("b", my_uint(16, 0xbebe))
-    operation.declareVariable(f, a)
-    operation.declareVariable(f, b)
-    operation.binary(f, "+", a, b)
-    operation.unary(f, "==", a, b)
-    operation.bitwise(f,"shr",a,4)
-    bottom(f)
+    vars = operation.genvariables(f)
+    operation.bitwise(f,"shr",vars[0],4)
     
 def bottom(f):
     f.write("\n")
@@ -74,17 +77,20 @@ def bottom(f):
 
 def runprogram(test):
     f = open("Runner.cpp", "w")
+    top(f)
     test(f)
+    bottom(f)
     f.close()
 
     subprocess.call("make")
     subprocess.call("./Runner")
     subprocess.call(["make", "clean"])
-    #subprocess.call(["rm", "Runner.cpp"])
 
 if __name__=="__main__":
 
+    subprocess.call(["rm", "Runner.cpp"])
     subprocess.call(["make", "clean"])
     runprogram(testcase1)
     runprogram(testcase2)
+    #subprocess.call(["rm", "Runner.cpp"])
 
