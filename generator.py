@@ -25,70 +25,91 @@ class operation:
     def randcreate(digitlength):
         return randint(2**(digitlength-1), (2**digitlength)-1)
 
-    def declareVariable(f, num):
-        f.write("\tUInt<" + str(num[1].bitsize) + "> u" + num[0] + "(\"" + str(hex(num[1].value)) + "\");\n")
+    def declareVariable(f, num, name):
+        f.write("\tUInt<" + str(num.bitsize) + "> u" + name + "(\"" + str(hex(num.value)) + "\");\n")
 
     def genvariables(f):
         bitsize = 16
         li = []
-        li.append(("a", my_uint(bitsize, operation.randcreate(bitsize))))
-        li.append(("b", my_uint(bitsize, operation.randcreate(bitsize))))
-        li.append(("c", my_uint(bitsize, operation.randcreate(bitsize))))
-        li.append(("d", my_uint(bitsize, operation.randcreate(bitsize))))
-        for n in li:
-            operation.declareVariable(f, n)
+        li.append(my_uint(bitsize, operation.randcreate(bitsize)))
+        li.append(my_uint(bitsize, operation.randcreate(bitsize)))
+        operation.declareVariable(f, li[0], "a")
+        operation.declareVariable(f, li[1], "b")
         return li
 
     def binary(f, op, a, b):
         func = operation.ops[op]
-        result = func(a[1],b[1])
-        f.write("\tassert(u"+a[0]+op+"u"+b[0]+" == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        result = func(a,b)
+        f.write("\tassert(u"+str(a.value)+op+"u"+str(b.value)+ " == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     def unary(f, op, a, b):
         func = operation.ops[op]
-        result = func(a[1],b[1])
-        f.write("\tassert("+str(result.value) +" == (u"+a[0]+op+"u"+b[0]+"));\n")
+        result = func(a,b)
+        f.write("\tassert("+str(result.value) +" == (u"+str(a.value)+op+"u"+str(b.value)+"));\n")
 
     def bitwise(f, op, a, n):
         func = operation.ops[op]
-        result = func(a[1], n)
-        f.write("\tassert(u"+a[0]+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        result = func(a, n)
+        f.write("\tassert(u"+str(a.value)+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
-def top(f):
-    f.write("#include \"./firrtl-sig/uint.h\"\n")
-    f.write("#include<iostream>\n")
-    f.write("#include <assert.h>\n")
-    f.write("#include <stdlib.h>\n")
-    f.write("using namespace std;\n\n")
-    f.write("int main() {\n\n")
+class file:
+    def __init__(self, testcase):
+        f = open("Runner.cpp", "w")
+        self.f = f
+        self.testcase = testcase
 
-def testcase1(f, vars):
-    operation.binary(f, "+", vars[0], vars[1])
+    def new_uint(self, bitsize, value):
+        obj = my_uint(bitsize, value)
+        operation.declareVariable(self.f, obj, str(value))
+        return obj
 
-def testcase2(f, vars):
-    operation.bitwise(f,"shr",vars[0],4)
-    
-def bottom(f):
-    f.write("\n")
-    f.write("\treturn 0;\n")
-    f.write("}")
+    def docalculate(self, op, a ,b):
+        bins = ["+", "-", "*", "/", "%"]
+        uns = ["<", "<=", ">", ">=", "==", "!="]
+        bits = ["pad", "shl", "shr"]
+        if op in bins:
+            operation.binary(self.f, op, a, b)
+        elif op in uns:
+            operation.unary(self.f, op, a, b)
+        elif op in bits:
+            operation.bitwise(self.f, op, a, b)
 
-def runprogram(test):
-    f = open("Runner.cpp", "w")
-    top(f)
-    test(f, operation.genvariables(f))
-    bottom(f)
-    f.close()
+    def top(self):
+        self.f.write("#include \"./firrtl-sig/uint.h\"\n")
+        self.f.write("#include <iostream>\n")
+        self.f.write("#include <assert.h>\n")
+        self.f.write("#include <stdlib.h>\n")
+        self.f.write("using namespace std;\n\n")
+        self.f.write("int main() {\n\n")
 
-    subprocess.call("make")
-    subprocess.call("./Runner")
-    subprocess.call(["make", "clean"])
+    def bottom(self):
+        self.f.write("\n")
+        self.f.write("\treturn 0;\n")
+        self.f.write("}")
+
+    def runprogram(self):
+        self.top()
+        self.testcase(self)
+        self.bottom()
+        self.f.close()
+        subprocess.call("make")
+        subprocess.call("./Runner")
+        subprocess.call(["make", "clean"])
+
+    def testcase1(self):
+        a = self.new_uint(16, operation.randcreate(16))
+        b = self.new_uint(16, operation.randcreate(16))
+        self.docalculate("+", a, b)
+
+    def testcase2(self):
+        a = self.new_uint(16, operation.randcreate(16))
+        self.docalculate("shr", a, 4)
 
 if __name__=="__main__":
-
-    subprocess.call(["rm", "Runner.cpp"])
     subprocess.call(["make", "clean"])
-    runprogram(testcase1)
-    runprogram(testcase2)
+    test = file(file.testcase1)
+    test.runprogram()
+    test = file(file.testcase2)
+    test.runprogram()
     #subprocess.call(["rm", "Runner.cpp"])
 
