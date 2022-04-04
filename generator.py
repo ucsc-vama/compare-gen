@@ -86,7 +86,7 @@ class file:
         subprocess.call(["g++", "Runner.cpp", "-o", "output"]) #test cpp program
         subprocess.call(["./output"])
         subprocess.call(["rm", "output"])
-        print("test sucess")
+        print("test ended!")
 
     def testcase1(self): # modify to test for given variable
         a = self.new_uint(16, operation.randcreate(16))
@@ -96,9 +96,6 @@ class file:
     def testcase2(self): #another example
         a = self.new_uint(16, operation.randcreate(16))
         self.docalculate("shr", a, 4)
-
-    def printo():
-        print("oh word")
 
 if __name__=="__main__":
     subprocess.call(["rm", "Runner.cpp"])
