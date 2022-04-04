@@ -28,15 +28,6 @@ class operation:
     def declareVariable(f, num: my_uint):
         f.write("\tUInt<" + str(num.bitsize) + "> u" + str(num.value) + "(\"" + str(hex(num.value)) + "\");\n")
 
-    def genvariables(f):
-        bitsize = 16
-        li = []
-        li.append(my_uint(bitsize, operation.randcreate(bitsize)))
-        li.append(my_uint(bitsize, operation.randcreate(bitsize)))
-        operation.declareVariable(f, li[0], "a")
-        operation.declareVariable(f, li[1], "b")
-        return li
-
     def binary(f, op: str, a: my_uint, b: my_uint):
         func = operation.ops[op]
         result = func(a,b)
@@ -63,7 +54,7 @@ class file:
         operation.declareVariable(self.f, obj)
         return obj
 
-    def docalculate(self, op: str, a: my_uint ,b: my_uint): #call correct operation
+    def docalculate(self, op: str, a: my_uint, b: my_uint): #call correct operation
         bins = ["+", "-", "*", "/", "%"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
         bits = ["pad", "shl", "shr"]
@@ -95,6 +86,7 @@ class file:
         subprocess.call(["g++", "Runner.cpp", "-o", "output"]) #test cpp program
         subprocess.call(["./output"])
         subprocess.call(["rm", "output"])
+        print("test sucess")
 
     def testcase1(self): # modify to test for given variable
         a = self.new_uint(16, operation.randcreate(16))
@@ -104,6 +96,9 @@ class file:
     def testcase2(self): #another example
         a = self.new_uint(16, operation.randcreate(16))
         self.docalculate("shr", a, 4)
+
+    def printo():
+        print("oh word")
 
 if __name__=="__main__":
     subprocess.call(["rm", "Runner.cpp"])
