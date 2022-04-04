@@ -6,11 +6,6 @@ First run generator:
 
     $ python generator.py
 
-Compile and run C++ code:
-
-    $ make
-    $ ./Runner
-
 Notes:
 * firrtl sig outputs signed bit 1 when subtracting 64bit or 128bit
 ```

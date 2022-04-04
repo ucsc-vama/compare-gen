@@ -24,6 +24,21 @@ def testcase3(self):
     for i in range(0, 6):
         for j in range(0, 6):
             generator.file.docalculate(self,"%", li[i], li[j])
+    for i in range(0, 6):
+        for j in range(0, 6):
+            generator.file.docalculate(self,"<", li[i], li[j])
+    for i in range(0, 6):
+        for j in range(0, 6):
+            generator.file.docalculate(self,"<=", li[i], li[j])
+    for i in range(0, 6):
+        for j in range(0, 6):
+            generator.file.docalculate(self,">", li[i], li[j])
+    for i in range(0, 6):
+        for j in range(0, 6):
+            generator.file.docalculate(self,">=", li[i], li[j])
+    for i in range(0, 6):
+        for j in range(0, 6):
+            generator.file.docalculate(self,"==", li[i], li[j])
 
 
 if __name__=="__main__":
