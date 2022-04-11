@@ -54,6 +54,12 @@ class file:
         operation.declareVariable(self.f, obj)
         return obj
 
+    # def populate_list(self, n, bitsize):
+    #     li = []
+    #     for i in range(n):
+    #         li.append(self.new_uint(bitsize, operation.randcreate(bitsize)))
+    #     return li
+
     def docalculate(self, op: str, a: my_uint, b: my_uint): #call correct operation
         bins = ["+", "-", "*", "/", "%"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
