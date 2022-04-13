@@ -25,9 +25,9 @@ def calc_all_64(self, li):
             
 def testcase3(self):
     #simple random cases
-    # li = []
-    # li = populate_list(self, li, 3, 16)
-    # calc_all(self, li)
+    #li = []
+    #li = populate_list(self, li, 3, 16)
+    #calc_all(self, li)
 
     # li = []
     # li = populate_list(self, li, 3, 127)
@@ -37,10 +37,10 @@ def testcase3(self):
     li = []
     li.append(generator.file.new_uint(self, 1, 0x0))
     #li.append(generator.file.new_uint(self, 1, 0x1))
-    li.append(generator.file.new_uint(self, 2, 0x2))
+    #li.append(generator.file.new_uint(self, 2, 0x2))
     #li.append(generator.file.new_uint(self, 2, 0x3))
     #li.append(generator.file.new_uint(self, 5, 0x11))
-    calc_all(self, li)
+    #calc_all(self, li)
 
     
 

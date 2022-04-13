@@ -6,10 +6,6 @@ First run generator:
 
     $ python generator.py
 
-Notes:
-* firrtl sig outputs signed bit 1 when subtracting 64bit or 128bit
-```
-	UInt<64> u5("0xa3901ba6fe91832a");
-	cout << u5-u5 << endl;
-	//output: 0x10000000000000000<U65>
-```
+NOTES:
+
+* firrtl spec says for bitsize to be min(a,b)+1, which wrong btw, but thats not what firrtl sig implements. 
