@@ -1,6 +1,6 @@
 [submodule "firrtl-operations"]
-	path = firrtl-operations
-	url = https://github.com/ucsc-vama/firrtl-operations
+    path = firrtl-operations
+    url = https://github.com/ucsc-vama/firrtl-operations
 [submodule "firrtl-sig"]
-	path = firrtl-sig
-	url = https://github.com/ucsc-vama/firrtl-sig
+    path = firrtl-sig
+    url = https://github.com/ucsc-vama/firrtl-sig
