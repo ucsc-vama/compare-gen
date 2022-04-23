@@ -6,10 +6,10 @@ using namespace std;
 
 int main() {
 
-	UInt<1> u0("0x0");
-	UInt<2> u1("0x2");
+	UInt<80> u0("0x3da3e90d8f93ab12d239");
+	UInt<80> u1("0x234901234823ad3e9283");
 
-	cout << u0 + u1 << endl;
+	cout << (u0 - u1) << endl;
 
 	return 0;
 }
