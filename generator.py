@@ -63,7 +63,7 @@ class file:
         elif op in uns:
             operation.unary(self.f, op, a, b)
         elif op in bits:
-            operation.bitwise(self.f, op, a, b)
+            operation.bitwise(self.f, op, a, b.value)
 
     def top(self):#header and main
         self.f.write("#include \"./firrtl-sig/uint.h\"\n")
