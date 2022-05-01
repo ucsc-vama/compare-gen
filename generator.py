@@ -21,6 +21,9 @@ class operation:
     ops["pad"] = my_uint.uint_pad
     ops["shl"] = my_uint.uint_shl
     ops["shr"] = my_uint.uint_shr
+    ops["<<"] = my_uint.uint_dshl
+    ops[">>"] = my_uint.uint_dshr
+    ops["~"] = my_uint.uint_not
 
     def randcreate(digitlength: int) -> int:
         return randint(2**(digitlength-1), (2**digitlength)-1)
@@ -43,6 +46,17 @@ class operation:
         result = func(a, n)
         f.write("\tassert(u"+str(a.value)+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    def dynamic(f, op: str, a: my_uint, b: my_uint):
+        func = operation.ops[op]
+        result = func(a, b)
+        f.write("\tassert((u"+str(a.value)+" "+op+" UInt<"+str(b.bitsize)+">("+str(b.value)+")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+
+    def singular(f, op: str, a: my_uint):
+        func = operation.ops[op]
+        result = func(a)
+        f.write("\tassert("+op+"u"+str(a.value)+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+
+
 class file:
     def __init__(self, testcase): #initalize file
         f = open("Runner.cpp", "w")
@@ -54,16 +68,22 @@ class file:
         operation.declareVariable(self.f, obj)
         return obj
 
-    def docalculate(self, op: str, a: my_uint, b: my_uint): #call correct operation
-        bins = ["+", "-", "*", "/", "%"]
+    def docalculate(self, op: str, a: my_uint, b: my_uint=my_uint(1, 0x1)): #call correct operation
+        bins = ["+", "-", "*", "/", "%", "dshl", "dshr"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
         bits = ["pad", "shl", "shr"]
+        dyn = ["<<", ">>"]
+        sin = ["~"]
         if op in bins:
             operation.binary(self.f, op, a, b)
         elif op in uns:
             operation.unary(self.f, op, a, b)
         elif op in bits:
-            operation.bitwise(self.f, op, a, b.value)
+            operation.bitwise(self.f, op, a, 3)
+        elif op in dyn:
+            operation.dynamic(self.f, op, a, b)
+        elif op in sin:
+            operation.singular(self.f, op, a)
 
     def top(self):#header and main
         self.f.write("#include \"./firrtl-sig/uint.h\"\n")

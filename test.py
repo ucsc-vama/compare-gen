@@ -1,5 +1,6 @@
 import subprocess
 import generator
+from my_uint import *
 
 def populate_list(self, li, n, bitsize):
     for i in range(n):
@@ -9,7 +10,6 @@ def populate_list(self, li, n, bitsize):
 def calc_all(self, li):
     for i in li:
         for j in li:
-            
             generator.file.docalculate(self,"+", i, j)
             generator.file.docalculate(self,"-", i, j)
             generator.file.docalculate(self,"*", i, j)
@@ -20,20 +20,19 @@ def calc_all(self, li):
             generator.file.docalculate(self,"==", i, j)
             generator.file.docalculate(self,"!=", i, j)
             generator.file.docalculate(self,"pad", i, j)
+            generator.file.docalculate(self,"shl", i, j)
+            generator.file.docalculate(self,"shr", i, j)
             if j.bitsize < 64 and j.value > 0:
                 generator.file.docalculate(self,"/", i, j)
                 generator.file.docalculate(self,"%", i, j)
-
-def calc_compare(self, li):#bitsize < 64
-    for i in li:
-        for j in li:
-            generator.file.docalculate(self,"<", i, j)
-            generator.file.docalculate(self,"<=", i, j)
-            generator.file.docalculate(self,">", i, j)
-            generator.file.docalculate(self,">=", i, j)
-            generator.file.docalculate(self,"==", i, j)
-            generator.file.docalculate(self,"!=", i, j)
             
+def calc_dyn(self, li):
+    b = my_uint(4, 0x4)
+    for i in li:
+        generator.file.docalculate(self,"<<", i, b)
+        generator.file.docalculate(self,">>", i, b)
+        generator.file.docalculate(self,"~", i)
+
 def testcase3(self):
     #simple random cases
 
@@ -42,27 +41,25 @@ def testcase3(self):
     calc_all(self, li)
 
     li = []
-    li = populate_list(self, li, 3, 31)
+    li = populate_list(self, li, 3, 32)
     calc_all(self, li)
 
-    # li = []
-    # li = populate_list(self, li, 3, 127)
-    # calc_all(self, li)
+    li = []
+    li = populate_list(self, li, 3, 127)
+    calc_all(self, li)
 
-    # li = []
-    # li = populate_list(self, li, 3, 200)
-    # calc_all(self, li)
+    li = []
+    li = populate_list(self, li, 3, 200)
+    calc_all(self, li)
 
     #small values
     li = []
     li.append(generator.file.new_uint(self, 1, 0x0))
     li.append(generator.file.new_uint(self, 1, 0x1))
-    calc_compare(self, li)
 
     li = []
     li.append(generator.file.new_uint(self, 2, 0x2))
     li.append(generator.file.new_uint(self, 2, 0x3))
-    calc_compare(self, li)
 
     li = []
     li.append(generator.file.new_uint(self, 3, 0x4))
@@ -81,7 +78,8 @@ def testcase3(self):
     li.append(generator.file.new_uint(self, 4, 0xF))
     
     
-    calc_compare(self, li)
+    calc_all(self, li)
+    calc_dyn(self, li)
     
 
 if __name__=="__main__":
