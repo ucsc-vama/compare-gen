@@ -22,12 +22,20 @@ def calc_all(self, li):
             generator.file.docalculate(self,"pad", i, j)
             generator.file.docalculate(self,"shl", i, j)
             generator.file.docalculate(self,"shr", i, j)
+            generator.file.docalculate(self,"&", i, j)
+            generator.file.docalculate(self,"|", i, j)
+            generator.file.docalculate(self,"^", i, j)
+            generator.file.docalculate(self,"andr", i, j)
+            generator.file.docalculate(self,"orr", i, j)
+            generator.file.docalculate(self,"xorr", i, j)
+            generator.file.docalculate(self,"cat", i, j)
             if j.bitsize < 64 and j.value > 0:
                 generator.file.docalculate(self,"/", i, j)
                 generator.file.docalculate(self,"%", i, j)
             
 def calc_dyn(self, li):
-    b = my_uint(4, 0x4)
+    b = my_uint(3, 0x4)
+    #b = my_uint(5, 0x1f)
     for i in li:
         generator.file.docalculate(self,"<<", i, b)
         generator.file.docalculate(self,">>", i, b)
@@ -35,7 +43,6 @@ def calc_dyn(self, li):
 
 def testcase3(self):
     #simple random cases
-
     li = []
     li = populate_list(self, li, 3, 16)
     calc_all(self, li)
@@ -53,19 +60,16 @@ def testcase3(self):
     calc_all(self, li)
 
     #small values
-    li = []
-    li.append(generator.file.new_uint(self, 1, 0x0))
-    li.append(generator.file.new_uint(self, 1, 0x1))
-
-    li = []
-    li.append(generator.file.new_uint(self, 2, 0x2))
-    li.append(generator.file.new_uint(self, 2, 0x3))
-
-    li = []
-    li.append(generator.file.new_uint(self, 3, 0x4))
-    li.append(generator.file.new_uint(self, 3, 0x5))
-    li.append(generator.file.new_uint(self, 3, 0x6))
-    li.append(generator.file.new_uint(self, 3, 0x7))
+    # li = []
+    # li.append(generator.file.new_uint(self, 1, 0x0))
+    # li.append(generator.file.new_uint(self, 1, 0x1))
+    # li.append(generator.file.new_uint(self, 2, 0x2))
+    # li.append(generator.file.new_uint(self, 2, 0x3))
+    # li.append(generator.file.new_uint(self, 3, 0x4))
+    # li.append(generator.file.new_uint(self, 3, 0x5))
+    # li.append(generator.file.new_uint(self, 3, 0x6))
+    # li.append(generator.file.new_uint(self, 3, 0x7))
+    # calc_all(self, li) #small values if shifting is greater than bitlength
 
     li = []
     li.append(generator.file.new_uint(self, 4, 0x8))
@@ -76,8 +80,6 @@ def testcase3(self):
     li.append(generator.file.new_uint(self, 4, 0xD))
     li.append(generator.file.new_uint(self, 4, 0xE))
     li.append(generator.file.new_uint(self, 4, 0xF))
-    
-    
     calc_all(self, li)
     calc_dyn(self, li)
     

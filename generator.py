@@ -24,6 +24,13 @@ class operation:
     ops["<<"] = my_uint.uint_dshl
     ops[">>"] = my_uint.uint_dshr
     ops["~"] = my_uint.uint_not
+    ops["&"] = my_uint.uint_and
+    ops["|"] = my_uint.uint_or
+    ops["^"] = my_uint.uint_xor
+    ops["andr"] = my_uint.uint_andr
+    ops["orr"] = my_uint.uint_orr
+    ops["xorr"] = my_uint.uint_xorr
+    ops["cat"] = my_uint.uint_cat
 
     def randcreate(digitlength: int) -> int:
         return randint(2**(digitlength-1), (2**digitlength)-1)
@@ -31,31 +38,51 @@ class operation:
     def declareVariable(f, num: my_uint):
         f.write("\tUInt<" + str(num.bitsize) + "> u" + str(num.value) + "(\"" + str(hex(num.value)) + "\");\n")
 
+    #	assert(u0+u0 == UInt<1>("0x0"));
     def binary(f, op: str, a: my_uint, b: my_uint):
         func = operation.ops[op]
         result = func(a,b)
         f.write("\tassert(u"+str(a.value)+op+"u"+str(b.value)+ " == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
+    #	assert(0 == (u59221<u58024));
     def unary(f, op: str, a: my_uint, b: my_uint):
         func = operation.ops[op]
         result = func(a,b)
         f.write("\tassert("+str(result.value) +" == (u"+str(a.value)+op+"u"+str(b.value)+"));\n")
 
+    #	assert(u59221.pad<3>() == UInt<16>("0xe755"));
     def bitwise(f, op: str, a: my_uint, n: int):
         func = operation.ops[op]
         result = func(a, n)
         f.write("\tassert(u"+str(a.value)+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
     def dynamic(f, op: str, a: my_uint, b: my_uint):
         func = operation.ops[op]
         result = func(a, b)
-        f.write("\tassert((u"+str(a.value)+" "+op+" UInt<"+str(b.bitsize)+">("+str(b.value)+")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        f.write("\tassert((u"+str(a.value)+" "+op+" UInt<"+str(b.bitsize)+">(\""+str(hex(b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    #   assert(~u0 == UInt<1>("0x0"));
     def singular(f, op: str, a: my_uint):
         func = operation.ops[op]
         result = func(a)
         f.write("\tassert("+op+"u"+str(a.value)+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    #   assert(u15%u15 == UInt<4>("0x0"));
+    def comp(f, op: str, a: my_uint, b: my_uint):
+        func = operation.ops[op]
+        result = func(a,b)
+        f.write("\tassert((u"+str(a.value)+op+"u"+str(b.value)+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+
+    def binarybitwise(f, op: str, a: my_uint):
+        func = operation.ops[op]
+        result = func(a)
+        f.write("\tassert((u"+str(a.value)+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+
+    def vlv(f, op: str, a: my_uint, b: my_uint):
+        func = operation.ops[op]
+        result = func(a, b)
+        f.write("\tassert(u"+str(a.value)+"."+op+"(u"+str(b.value)+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
     def __init__(self, testcase): #initalize file
@@ -69,11 +96,14 @@ class file:
         return obj
 
     def docalculate(self, op: str, a: my_uint, b: my_uint=my_uint(1, 0x1)): #call correct operation
-        bins = ["+", "-", "*", "/", "%", "dshl", "dshr"]
+        bins = ["+", "-", "*", "/", "%"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
         bits = ["pad", "shl", "shr"]
-        dyn = ["<<", ">>"]
+        dyn = ["<<", ">>",]
         sin = ["~"]
+        comp = ["&", "|", "^"]
+        binbit = ["andr", "orr", "xorr"]
+        vlv = ["cat"]
         if op in bins:
             operation.binary(self.f, op, a, b)
         elif op in uns:
@@ -84,6 +114,12 @@ class file:
             operation.dynamic(self.f, op, a, b)
         elif op in sin:
             operation.singular(self.f, op, a)
+        elif op in comp:
+            operation.comp(self.f, op, a, b)
+        elif op in binbit:
+            operation.binarybitwise(self.f, op, a)
+        elif op in vlv:
+            operation.vlv(self.f, op, a, b)
 
     def top(self):#header and main
         self.f.write("#include \"./firrtl-sig/uint.h\"\n")
