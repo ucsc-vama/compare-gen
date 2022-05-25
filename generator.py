@@ -84,6 +84,11 @@ class operation:
         result = func(a, b)
         f.write("\tassert(u"+str(a.value)+"."+op+"(u"+str(b.value)+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    def threeparm(f, op: str, a: my_uint, b: my_uint, c: my_uint):
+        func = operation.ops[op]
+        result = func(a, b.value, c.value)
+        f.write("\tassert((u"+str(a.value)+"."+op+"<"+str(b.value)+","+str(c.value)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+
 class file:
     def __init__(self, testcase): #initalize file
         f = open("Runner.cpp", "w")
@@ -95,7 +100,7 @@ class file:
         operation.declareVariable(self.f, obj)
         return obj
 
-    def docalculate(self, op: str, a: my_uint, b: my_uint=my_uint(1, 0x1)): #call correct operation
+    def docalculate(self, op: str, a: my_uint, b: my_uint=my_uint(1, 0x1), c: my_uint=my_uint(1, 0x1)): #call correct operation
         bins = ["+", "-", "*", "/", "%"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
         bits = ["pad", "shl", "shr"]
@@ -104,6 +109,7 @@ class file:
         comp = ["&", "|", "^"]
         binbit = ["andr", "orr", "xorr"]
         vlv = ["cat"]
+        threeparm = ["bits"]
         if op in bins:
             operation.binary(self.f, op, a, b)
         elif op in uns:
@@ -120,6 +126,8 @@ class file:
             operation.binarybitwise(self.f, op, a)
         elif op in vlv:
             operation.vlv(self.f, op, a, b)
+        elif op in threeparm:
+            operation.threeparm(self.f, op, a, b, c)
 
     def top(self):#header and main
         self.f.write("#include \"./firrtl-sig/uint.h\"\n")

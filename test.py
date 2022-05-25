@@ -29,6 +29,7 @@ def calc_all(self, li):
             generator.file.docalculate(self,"orr", i, j)
             generator.file.docalculate(self,"xorr", i, j)
             generator.file.docalculate(self,"cat", i, j)
+            
             if j.bitsize < 64 and j.value > 0:
                 generator.file.docalculate(self,"/", i, j)
                 generator.file.docalculate(self,"%", i, j)
@@ -41,23 +42,27 @@ def calc_dyn(self, li):
         generator.file.docalculate(self,">>", i, b)
         generator.file.docalculate(self,"~", i)
 
+def calc_lohi(self, li):
+    for i in li:
+        generator.file.docalculate(self,"bits", i, a, b)
+
 def testcase3(self):
     #simple random cases
-    li = []
-    li = populate_list(self, li, 3, 16)
-    calc_all(self, li)
+    # li = []
+    # li = populate_list(self, li, 3, 16)
+    # calc_all(self, li)
 
-    li = []
-    li = populate_list(self, li, 3, 32)
-    calc_all(self, li)
+    # li = []
+    # li = populate_list(self, li, 3, 32)
+    # calc_all(self, li)
 
-    li = []
-    li = populate_list(self, li, 3, 127)
-    calc_all(self, li)
+    # li = []
+    # li = populate_list(self, li, 3, 127)
+    # calc_all(self, li)
 
-    li = []
-    li = populate_list(self, li, 3, 200)
-    calc_all(self, li)
+    # li = []
+    # li = populate_list(self, li, 3, 200)
+    # calc_all(self, li)
 
     #small values
     # li = []
