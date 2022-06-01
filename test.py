@@ -44,7 +44,7 @@ def calc_dyn(self, li):
 
 def calc_lohi(self, li):
     for i in li:
-        generator.file.docalculate(self,"bits", i, a, b)
+        generator.file.docalculate(self,"bits", i)
 
 def testcase3(self):
     #simple random cases
@@ -87,6 +87,7 @@ def testcase3(self):
     li.append(generator.file.new_uint(self, 4, 0xF))
     calc_all(self, li)
     calc_dyn(self, li)
+    calc_lohi(self, li)
     
 
 if __name__=="__main__":

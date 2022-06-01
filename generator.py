@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 from random import randint
-sys.path.insert(1, './firrtl-operations')
+sys.path.insert(1, str('./firrtl-operations'))
 from my_uint import *
 
 class operation:
@@ -31,6 +31,7 @@ class operation:
     ops["orr"] = my_uint.uint_orr
     ops["xorr"] = my_uint.uint_xorr
     ops["cat"] = my_uint.uint_cat
+    ops["bits"] = my_uint.uint_bits
 
     def randcreate(digitlength: int) -> int:
         return randint(2**(digitlength-1), (2**digitlength)-1)
@@ -84,10 +85,12 @@ class operation:
         result = func(a, b)
         f.write("\tassert(u"+str(a.value)+"."+op+"(u"+str(b.value)+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
-    def threeparm(f, op: str, a: my_uint, b: my_uint, c: my_uint):
+    def threeparm(f, op: str, a: my_uint):
         func = operation.ops[op]
-        result = func(a, b.value, c.value)
-        f.write("\tassert((u"+str(a.value)+"."+op+"<"+str(b.value)+","+str(c.value)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        for i in range(2, a.bitsize):
+            for j in range(1,i-1):
+                result = func(a, i, j)
+                f.write("\tassert((u"+str(a.value)+"."+op+"<"+str(i)+","+str(j)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
     def __init__(self, testcase): #initalize file
@@ -127,7 +130,7 @@ class file:
         elif op in vlv:
             operation.vlv(self.f, op, a, b)
         elif op in threeparm:
-            operation.threeparm(self.f, op, a, b, c)
+            operation.threeparm(self.f, op, a)
 
     def top(self):#header and main
         self.f.write("#include \"./firrtl-sig/uint.h\"\n")
