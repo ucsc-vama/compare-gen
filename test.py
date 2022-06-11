@@ -2,12 +2,6 @@ import subprocess
 import generator
 from my_uint import *
 
-def populate_list(self, n, bitsize):
-    li = []
-    for i in range(n):
-        li.append(generator.file.new_uint(self, bitsize, generator.operation.randcreate(bitsize)))
-    return li
-
 def create_randvars(self, n, bitsize):
     li = set()
     for i in range(n):
@@ -40,14 +34,11 @@ def calc_two(self, li):
             generator.file.docalculate(self,"|", i, j)
             generator.file.docalculate(self,"^", i, j)
             generator.file.docalculate(self,"cat", i, j)
+            generator.file.docalculate(self,"/", i, j)
+            generator.file.docalculate(self,"%", i, j)
             # if j.bitsize < 64 and j.value > 0:
             #     generator.file.docalculate(self,"/", i, j)
             #     generator.file.docalculate(self,"%", i, j)
-            
-def calc_add(self, li):
-    for i in li:
-        for j in li:
-            generator.file.docalculate(self,"+", i, j)
 
 def calc_bitwise(self, li):
     for i in li:
@@ -71,15 +62,12 @@ def calc_lohi(self, li):
             for k in range(j):
                 generator.file.docalculate(self,"bits", i, j, k)
 
+def testcase1(self):
+    li = create_vars(self, 10)
+
 def testcase2(self):
-    ##complete test (working)
     li = create_vars(self, 16)
     calc_two(self, li)
-    # calc_lohi(self, li)
-
-def testcase1(self):
-    li = create_randvars(self, 10, 32)
-    calc_add(self, li)
 
 def testcase3(self):
     li = create_randvars(self, 10, 32)
