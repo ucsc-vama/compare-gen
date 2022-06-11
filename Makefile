@@ -1,5 +1,5 @@
 
-SRC	= Runner.cpp
+SRC	= Runner5.cpp
 OBJ	= $(SRC:%.cpp=%.o)
 
 CFLAGS	= -std=c++17 -Wall

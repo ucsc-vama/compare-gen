@@ -45,7 +45,7 @@ class operation:
         uint_a = my_uint(len(bin(a)[2:]),a)
         uint_b = my_uint(len(bin(b)[2:]),b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert(u"+str(uint_a.value)+op+"u"+str(uint_b.value)+ " == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        file.f.write("\tassert((u"+str(uint_a.value)+op+"u"+str(uint_b.value)+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #	assert(0 == (u59221<u58024));
     def unary(file, op: str, a: int, b: int):
@@ -63,41 +63,48 @@ class operation:
         file.f.write("\tassert(u"+str(uint_a.value)+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
-    def dynamic(file, op: str, a: int):
+    def dynamic(file, op: str, a: int, b):
         func = operation.ops[op]
-        for i in range(a.value):
-            uint_a = my_uint(len(bin(a)[2:]),a)
-            result = func(uint_a)
-            file.f.write("\tassert((u"+str(a)+" "+op+" UInt<"+str(file.li[i].bitsize)+">(\""+str(hex(i))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        uint_a = my_uint(len(bin(a)[2:]),a)
+        b_size = len(bin(b)[2:])
+        uint_b = my_uint(b_size,b)
+        result = func(uint_a, uint_b)
+        file.f.write("\tassert((u"+str(uint_a.value)+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(~u0 == UInt<1>("0x0"));
     def singular(file, op: str, a: my_uint):
         func = operation.ops[op]
-        result = func(a)
-        file.f.write("\tassert("+op+"u"+str(a.value)+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        uint_a = my_uint(len(bin(a)[2:]),a)
+        result = func(uint_a)
+        file.f.write("\tassert("+op+"u"+str(uint_a.value)+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(u15%u15 == UInt<4>("0x0"));
     def comp(file, op: str, a: int, b: int):
         func = operation.ops[op]
-        result = func(file.li[a],file.li[b])
-        file.f.write("\tassert((u"+str(a)+op+"u"+str(b)+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        uint_a = my_uint(len(bin(a)[2:]),a)
+        uint_b = my_uint(len(bin(b)[2:]),b)
+        result = func(uint_a, uint_b)
+        file.f.write("\tassert((u"+str(uint_a.value)+op+"u"+str(uint_b)+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
-    def binarybitwise(file, op: str, a: my_uint):
+    #   assert((u4059599200.andr()) == UInt<1>("0x0"));
+    def binarybitwise(file, op: str, a: int):
         func = operation.ops[op]
-        result = func(a)
-        file.f.write("\tassert((u"+str(a.value)+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        uint_a = my_uint(len(bin(a)[2:]), a)
+        result = func(uint_a)
+        file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
-    def vlv(file, op: str, a: my_uint, b: my_uint):
+    def vlv(file, op: str, a: int, b: int):
         func = operation.ops[op]
-        result = func(a, b)
-        file.f.write("\tassert(u"+str(a.value)+"."+op+"(u"+str(b.value)+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        uint_a = my_uint(len(bin(a)[2:]),a)
+        uint_b = my_uint(len(bin(b)[2:]),b)
+        result = func(uint_a, uint_b)
+        file.f.write("\tassert(u"+str(uint_a.value)+"."+op+"(u"+str(uint_b.value)+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
-    def threeparm(file, op: str, a: my_uint):
+    def threeparm(file, op: str, a: int, b: int, c: int):
         func = operation.ops[op]
-        for i in range(2, a.bitsize):
-            for j in range(1,i-1):
-                result = func(a, i, j)
-                file.f.write("\tassert((u"+str(a.value)+"."+op+"<"+str(i)+","+str(j)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        uint_a = my_uint(len(bin(a)[2:]),a)
+        result = func(uint_a, b, c)
+        file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
     def __init__(self, name, testcase): #initalize file
@@ -113,8 +120,8 @@ class file:
         self.li.add(value)
         return obj
 
-    def docalculate(self, op: str, a, b): #call correct operation
-        bins = ["+", "-", "*", "/", "%"]
+    def docalculate(self, op: str, a, b = 0, c = 0): #call correct operation
+        bins = ["+", "-", "*", "/", "%", "&", "|", "^"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
         bits = ["pad", "shl", "shr"]
         dyn = ["<<", ">>"]
@@ -129,18 +136,16 @@ class file:
             operation.unary(self, op, a, b)
         elif op in bits:
             operation.bitwise(self, op, a, b)
-        # elif op in dyn:
-        #     operation.dynamic(self, op, a)
-        # elif op in sin:
-        #     operation.singular(self, op, a)
-        # elif op in comp:
-        #     operation.comp(self, op, a, b)
-        # elif op in binbit:
-        #     operation.binarybitwise(self, op, a)
-        # elif op in vlv:
-        #     operation.vlv(self, op, a, b)
-        # elif op in threeparm:
-        #     operation.threeparm(self, op, a)
+        elif op in dyn:
+            operation.dynamic(self, op, a, b)
+        elif op in sin:
+            operation.singular(self, op, a)
+        elif op in binbit:
+            operation.binarybitwise(self, op, a)
+        elif op in vlv:
+            operation.vlv(self, op, a, b)
+        elif op in threeparm:
+            operation.threeparm(self, op, a, b, c)
 
     def top(self):#header and main
         self.f.write("#include \"./firrtl-sig/uint.h\"\n")
