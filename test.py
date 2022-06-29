@@ -48,6 +48,8 @@ def calc_bitwise(self, li):
             generator.file.docalculate(self,"shr", i, j)
             generator.file.docalculate(self,"<<", i, j)
             generator.file.docalculate(self,">>", i, j)
+            generator.file.docalculate(self,"tail", i, j)
+            generator.file.docalculate(self,"head", i, j)
 
 def calc_sin(self, li):
     for i in li:

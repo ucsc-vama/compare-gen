@@ -32,6 +32,8 @@ class operation:
     ops["xorr"] = my_uint.uint_xorr
     ops["cat"] = my_uint.uint_cat
     ops["bits"] = my_uint.uint_bits
+    ops["tail"] = my_uint.uint_tail
+    ops["head"] = my_uint.uint_head
 
     def randcreate(digitlength: int) -> int:
         return randint(2**(digitlength-1), (2**digitlength)-1)
@@ -123,13 +125,14 @@ class file:
     def docalculate(self, op: str, a, b = 0, c = 0): #call correct operation
         bins = ["+", "-", "*", "/", "%", "&", "|", "^"]
         uns = ["<", "<=", ">", ">=", "==", "!="]
-        bits = ["pad", "shl", "shr"]
+        bits = ["pad", "shl", "shr", "head", "tail"]
         dyn = ["<<", ">>"]
         sin = ["~"]
         comp = ["&", "|", "^"]
         binbit = ["andr", "orr", "xorr"]
         vlv = ["cat"]
         threeparm = ["bits"]
+
         if op in bins:
             operation.binary(self, op, a, b)
         elif op in uns:

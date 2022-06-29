@@ -16,3 +16,5 @@ bit for signed types. n must be non-negative." (fixed)
     cout << (u8 << UInt<5>("0x1f")) << endl;
 >>>
 * uint "add" and comparisons of different bit length cannot be calculated.
+* uint "tail" should operate on n less than on equal to the bit width of e. however only works on less than.
+* similarly, uint "head" does not work on n equal to 0.
