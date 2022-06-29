@@ -15,4 +15,4 @@ bit for signed types. n must be non-negative." (fixed)
 >>>
     cout << (u8 << UInt<5>("0x1f")) << endl;
 >>>
-* uint "add" and comparisons of different bit length cannot be calculated. slight issue on firrtl sig
+* uint "add" and comparisons of different bit length cannot be calculated.

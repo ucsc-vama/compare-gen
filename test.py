@@ -1,4 +1,4 @@
-import subprocess
+#import subprocess
 import generator
 from my_uint import *
 
@@ -62,22 +62,22 @@ def calc_lohi(self, li):
             for k in range(j):
                 generator.file.docalculate(self,"bits", i, j, k)
 
-def testcase1(self):
+def testcase1(self): # not used
     li = create_vars(self, 10)
 
-def testcase2(self):
+def testcase2(self): # + - * < <= > >= == != & | ^ cat / %
     li = create_vars(self, 16)
     calc_two(self, li)
 
-def testcase3(self):
+def testcase3(self): # pad shl shr << >>
     li = create_randvars(self, 10, 32)
     calc_bitwise(self, li)
 
-def testcase4(self):
+def testcase4(self): # ~ andr orr
     li = create_randvars(self, 10, 32)
     calc_sin(self, li)
 
-def testcase5(self):
+def testcase5(self): # bits
     li = create_vars(self, 16)
     calc_lohi(self, li)
 

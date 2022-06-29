@@ -170,19 +170,11 @@ class file:
         subprocess.call(["rm", "output"])
         print("test ended!")
 
-    def testcase1(self): # modify to test for given variable
-        a = self.new_uint(16, operation.randcreate(16))
-        b = self.new_uint(16, operation.randcreate(16))
-        self.docalculate("+", a, b)
 
-    def testcase2(self): #another example
-        a = self.new_uint(16, operation.randcreate(16))
-        self.docalculate("shr", a, 4)
-
-if __name__=="__main__":
-    subprocess.call(["rm", "Runner.cpp"])
-    test = file(file.testcase1)
-    test.runprogram()
+# if __name__=="__main__":
+    # subprocess.call(["rm", "Runner.cpp"])
+    # test = file("Runner1.cpp", file.testcase1)
+    # test.runprogram()
     #test = file(file.testcase2)
     #test.runprogram()
     #subprocess.call(["rm", "Runner.cpp"])
