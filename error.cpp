@@ -33,8 +33,12 @@ int main() {
     */
     // cout << (u1>u2) << endl;
 
-	UInt<32> u3568197793("0xd4ae60a1");
-	cout << u3568197793.tail<31>() << endl;
-	// assert(u3568197793.head<0>() == UInt<0>("0x0"));
+	/*
+	unable to tail with bitsize length n
+	unable to head n==0
+	*/
+	// UInt<32> u3568197793("0xd4ae60a1");
+	// cout << u3568197793.tail<32>() << endl;
+	// cout << u3568197793.head<0>() << endl;
 
 }
