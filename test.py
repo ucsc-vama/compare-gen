@@ -42,7 +42,7 @@ def calc_two(self, li):
 
 def calc_bitwise(self, li):
     for i in li:
-        for j in range(10):
+        for j in range(1,10):
             generator.file.docalculate(self,"pad", i, j)
             generator.file.docalculate(self,"shl", i, j)
             generator.file.docalculate(self,"shr", i, j)
@@ -71,7 +71,7 @@ def testcase2(self): # + - * < <= > >= == != & | ^ cat / %
     li = create_vars(self, 16)
     calc_two(self, li)
 
-def testcase3(self): # pad shl shr << >>
+def testcase3(self): # pad shl shr << >> head tail
     li = create_randvars(self, 10, 32)
     calc_bitwise(self, li)
 
@@ -82,6 +82,14 @@ def testcase4(self): # ~ andr orr
 def testcase5(self): # bits
     li = create_vars(self, 16)
     calc_lohi(self, li)
+
+def keylimetest1(self): #test first 1000 numbers
+    li = create_vars(self, 1000)
+    calc_two(self, li)
+
+def keylimetest2(self): #test 1000 variables of bitsize 32
+    li = create_randvars(self, 1000, 32)
+    calc_two(self, li)
 
 if __name__=="__main__":
     #subprocess.call(["rm", "Runner.cpp"])
@@ -95,3 +103,7 @@ if __name__=="__main__":
     d.runprogram()
     e = generator.file("Runner5.cpp",testcase5)
     e.runprogram()
+    # key1 = generator.file("keylime1.cpp",keylimetest1)
+    # key1.runprogram()
+    # key2 = generator.file("keylime2.cpp",keylimetest2)
+    # key2.runprogram()
