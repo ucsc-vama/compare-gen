@@ -5,6 +5,9 @@ from random import randint
 sys.path.insert(1, str('./firrtl-operations'))
 from my_uint import *
 
+def getbitsize(var):
+    return len(bin(var)[2:])
+
 class operation:
     ops = {}
     ops["+"] = my_uint.uint_add
@@ -109,12 +112,15 @@ class operation:
         file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
-    def __init__(self, name, testcase): #initalize file
+    def __init__(self, name): #initalize file
         f = open(name, "w")
         self.name = name
         self.f = f
-        self.testcase = testcase
+        self.testcase = None
         self.li = set()
+
+    def settestcase(self, testcase):
+        self.testcase = testcase
 
     def new_uint(self, bitsize: int, value: int) -> my_uint:# create my_uint and declare in cpp
         obj = my_uint(bitsize, value)
@@ -163,16 +169,27 @@ class file:
         self.f.write("\treturn 0;\n")
         self.f.write("}")
 
-    def runprogram(self):
+    def runprogram(self,maxsize = 0):
         self.top()
-        self.testcase(self) # run test
+        self.testcase(self, maxsize) # run test
         self.bottom()
         self.f.close()
         subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
         subprocess.call(["./output"])
         subprocess.call(["rm", "output"])
-        print("test ended!")
+        print(self.name, "test ended!")
 
+    def runmanual(self, op, a, b):
+        self.top()
+        self.new_uint(getbitsize(a),a)
+        self.new_uint(getbitsize(b),b)
+        self.docalculate(op, a, b)
+        self.bottom()
+        self.f.close()
+        subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
+        subprocess.call(["./output"])
+        subprocess.call(["rm", "output"])
+        print(self.name, ": test ended!")
 
 # if __name__=="__main__":
     # subprocess.call(["rm", "Runner.cpp"])
