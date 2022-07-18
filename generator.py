@@ -44,13 +44,16 @@ class operation:
     def declareVariable(f, num: my_uint):
         f.write("\tUInt<" + str(num.bitsize) + "> u" + str(num.value) + "(\"" + str(hex(num.value)) + "\");\n")
 
+    def declareOneVariable(f, num: my_uint, name: str):
+        f.write("\tUInt<" + str(num.bitsize) + "> " + name + "(\"" + str(hex(num.value)) + "\");\n")
+
     #	assert(u0+u0 == UInt<1>("0x0"));
     def binary(file, op: str, a, b):
         func = operation.ops[op]
         uint_a = my_uint(len(bin(a)[2:]),a)
         uint_b = my_uint(len(bin(b)[2:]),b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert((u"+str(uint_a.value)+op+"u"+str(uint_b.value)+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #	assert(0 == (u59221<u58024));
     def unary(file, op: str, a: int, b: int):
@@ -58,14 +61,14 @@ class operation:
         uint_a = my_uint(len(bin(a)[2:]),a)
         uint_b = my_uint(len(bin(b)[2:]),b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert("+str(result.value) +" == (u"+str(uint_a.value)+op+"u"+str(uint_b.value)+"));\n")
+        file.f.write("\tassert("+str(result.value) +" == (a"+op+"b"+"));\n")
 
     #	assert(u59221.pad<3>() == UInt<16>("0xe755"));
     def bitwise(file, op: str, a: int, n):
         func = operation.ops[op]
         uint_a = my_uint(len(bin(a)[2:]),a)
         result = func(uint_a, n)
-        file.f.write("\tassert(u"+str(uint_a.value)+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
     def dynamic(file, op: str, a: int, b):
@@ -74,14 +77,14 @@ class operation:
         b_size = len(bin(b)[2:])
         uint_b = my_uint(b_size,b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert((u"+str(uint_a.value)+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(~u0 == UInt<1>("0x0"));
     def singular(file, op: str, a: my_uint):
         func = operation.ops[op]
         uint_a = my_uint(len(bin(a)[2:]),a)
         result = func(uint_a)
-        file.f.write("\tassert("+op+"u"+str(uint_a.value)+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert("+op+"a"+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(u15%u15 == UInt<4>("0x0"));
     def comp(file, op: str, a: int, b: int):
@@ -89,22 +92,24 @@ class operation:
         uint_a = my_uint(len(bin(a)[2:]),a)
         uint_b = my_uint(len(bin(b)[2:]),b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert((u"+str(uint_a.value)+op+"u"+str(uint_b)+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #   assert((u4059599200.andr()) == UInt<1>("0x0"));
     def binarybitwise(file, op: str, a: int):
         func = operation.ops[op]
         uint_a = my_uint(len(bin(a)[2:]), a)
         result = func(uint_a)
-        file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert((a"+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    #   assert((u4.cat(u5)) == UInt<1>("0x1"));
     def vlv(file, op: str, a: int, b: int):
         func = operation.ops[op]
         uint_a = my_uint(len(bin(a)[2:]),a)
         uint_b = my_uint(len(bin(b)[2:]),b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert(u"+str(uint_a.value)+"."+op+"(u"+str(uint_b.value)+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert(a"+"."+op+"(b"+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+    #   assert((u4.bits<0,1>) == UInt<1>("0x1"));
     def threeparm(file, op: str, a: int, b: int, c: int):
         func = operation.ops[op]
         uint_a = my_uint(len(bin(a)[2:]),a)
@@ -112,9 +117,9 @@ class operation:
         file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
-    def __init__(self, name): #initalize file
-        f = open(name, "w")
-        self.name = name
+    def __init__(self, folder, name): #initalize file
+        self.name = "testcases/"+folder+"/"+name
+        f = open(self.name+".cpp", "w")
         self.f = f
         self.testcase = None
         self.li = set()
@@ -125,7 +130,12 @@ class file:
     def new_uint(self, bitsize: int, value: int) -> my_uint:# create my_uint and declare in cpp
         obj = my_uint(bitsize, value)
         operation.declareVariable(self.f, obj)
-        self.li.add(value)
+        # self.li.add(value)
+        return obj
+
+    def new_one_uint(self, bitsize: int, value: int, name) -> my_uint:# create my_uint and declare in cpp
+        obj = my_uint(bitsize, value)
+        operation.declareOneVariable(self.f, obj, name)
         return obj
 
     def docalculate(self, op: str, a, b = 0, c = 0): #call correct operation
@@ -149,6 +159,8 @@ class file:
             operation.dynamic(self, op, a, b)
         elif op in sin:
             operation.singular(self, op, a)
+        elif op in comp:
+            operation.comp(self, op, a, b)
         elif op in binbit:
             operation.binarybitwise(self, op, a)
         elif op in vlv:
@@ -157,7 +169,7 @@ class file:
             operation.threeparm(self, op, a, b, c)
 
     def top(self):#header and main
-        self.f.write("#include \"./firrtl-sig/uint.h\"\n")
+        self.f.write("#include \"../../firrtl-sig/uint.h\"\n")
         self.f.write("#include <iostream>\n")
         self.f.write("#include <assert.h>\n")
         self.f.write("#include <stdlib.h>\n")
@@ -177,18 +189,18 @@ class file:
         subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
         subprocess.call(["./output"])
         subprocess.call(["rm", "output"])
-        print(self.name, "test ended!")
+        print(self.name, ": test ended!")
 
-    def runmanual(self, op, a, b):
+    def runmanual(self, op, a, b = 0, c = 0):
         self.top()
-        self.new_uint(getbitsize(a),a)
-        self.new_uint(getbitsize(b),b)
-        self.docalculate(op, a, b)
+        self.new_one_uint(getbitsize(a),a, "a")
+        self.new_one_uint(getbitsize(b),b, "b")
+        self.docalculate(op, a, b, c)
         self.bottom()
         self.f.close()
-        subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
-        subprocess.call(["./output"])
-        subprocess.call(["rm", "output"])
+        subprocess.call(["g++", self.name+".cpp", "-o", self.name]) #test cpp program
+        subprocess.call(["./"+self.name])
+        subprocess.call(["rm", self.name])
         print(self.name, ": test ended!")
 
 # if __name__=="__main__":
