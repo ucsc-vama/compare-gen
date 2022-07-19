@@ -1,6 +1,6 @@
 #import subprocess
 import generator
-from my_uint import *
+from model_uint import *
 
 ################################################## Helper
 
@@ -38,7 +38,7 @@ def testpossible(varsize):
     for op in list_two:
         for i in range(8,varsize+1): #testing only after 8. change after fix
             for j in range(8,varsize+1):
-                calc_variables("brute","test"+ str(i) + op + str(j), op, i, j)
+                calc_variables("brute","test"+ str(i) + ''.join(str(ord(c)) for c in op) + str(j), op, i, j)
 
 def calc_two(self, li):
     for op in list_two:
