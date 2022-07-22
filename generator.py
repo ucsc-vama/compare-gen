@@ -5,7 +5,8 @@ sys.path.insert(1, str('./firrtl-operations'))
 from model_uint import *
 
 def getbitsize(var):
-    return len(bin(var)[2:])
+    return ceil(log2(var+1))
+    # return len(bin(var)[2:])
 
 class operation:
     ops = {}
@@ -168,11 +169,8 @@ class file:
             operation.threeparm(self, op, a, b, c)
 
     def top(self):#header and main
-        self.f.write("#include \"../../firrtl-sig/uint.h\"\n")
-        self.f.write("#include <iostream>\n")
+        self.f.write("#include \"../../../firrtl-sig/uint.h\"\n")
         self.f.write("#include <assert.h>\n")
-        self.f.write("#include <stdlib.h>\n")
-        self.f.write("using namespace std;\n\n")
         self.f.write("int main() {\n\n")
 
     def bottom(self): #return and closing
