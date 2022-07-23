@@ -50,69 +50,69 @@ class operation:
     #	assert(u0+u0 == UInt<1>("0x0"));
     def binary(file, op: str, a, b):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
-        uint_b = model_uint(len(bin(b)[2:]),b)
+        uint_a = model_uint(a)
+        uint_b = model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #	assert(0 == (u59221<u58024));
     def unary(file, op: str, a: int, b: int):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
-        uint_b = model_uint(len(bin(b)[2:]),b)
+        uint_a = model_uint(a)
+        uint_b = model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert("+str(result.value) +" == (a"+op+"b"+"));\n")
 
     #	assert(u59221.pad<3>() == UInt<16>("0xe755"));
     def bitwise(file, op: str, a: int, n):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
+        uint_a = model_uint(a)
         result = func(uint_a, n)
         file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
     def dynamic(file, op: str, a: int, b):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
-        b_size = len(bin(b)[2:])
-        uint_b = model_uint(b_size,b)
+        uint_a = model_uint(a)
+        b_size = getbitsize(b)
+        uint_b = model_uint(b, b_size)
         result = func(uint_a, uint_b)
         file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(~u0 == UInt<1>("0x0"));
     def singular(file, op: str, a: model_uint):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
+        uint_a = model_uint(a)
         result = func(uint_a)
         file.f.write("\tassert("+op+"a"+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(u15%u15 == UInt<4>("0x0"));
     def comp(file, op: str, a: int, b: int):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
-        uint_b = model_uint(len(bin(b)[2:]),b)
+        uint_a = model_uint(a)
+        uint_b = model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #   assert((u4059599200.andr()) == UInt<1>("0x0"));
     def binarybitwise(file, op: str, a: int):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]), a)
+        uint_a = model_uint(a)
         result = func(uint_a)
         file.f.write("\tassert((a"+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u4.cat(u5)) == UInt<1>("0x1"));
     def vlv(file, op: str, a: int, b: int):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
-        uint_b = model_uint(len(bin(b)[2:]),b)
+        uint_a = model_uint(a)
+        uint_b = model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert(a"+"."+op+"(b"+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u4.bits<0,1>) == UInt<1>("0x1"));
     def threeparm(file, op: str, a: int, b: int, c: int):
         func = operation.ops[op]
-        uint_a = model_uint(len(bin(a)[2:]),a)
+        uint_a = model_uint(a)
         result = func(uint_a, b, c)
         file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
@@ -128,13 +128,13 @@ class file:
         self.testcase = testcase
 
     def new_uint(self, bitsize: int, value: int) -> model_uint:# create model_uint and declare in cpp
-        obj = model_uint(bitsize, value)
+        obj = model_uint(value, bitsize)
         operation.declareVariable(self.f, obj)
         # self.li.add(value)
         return obj
 
     def new_one_uint(self, bitsize: int, value: int, name) -> model_uint:# create model_uint and declare in cpp
-        obj = model_uint(bitsize, value)
+        obj = model_uint(value, bitsize)
         operation.declareOneVariable(self.f, obj, name)
         return obj
 
