@@ -178,15 +178,15 @@ class file:
         self.f.write("\treturn 0;\n")
         self.f.write("}")
 
-    def runprogram(self,maxsize = 0):
-        self.top()
-        self.testcase(self, maxsize) # run test
-        self.bottom()
-        self.f.close()
-        subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
-        subprocess.call(["./output"])
-        subprocess.call(["rm", "output"])
-        print(self.name, ": test ended!")
+    # def runprogram(self,maxsize = 0):
+    #     self.top()
+    #     self.testcase(self, maxsize) # run test
+    #     self.bottom()
+    #     self.f.close()
+    #     subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
+    #     subprocess.call(["./output"])
+    #     subprocess.call(["rm", "output"])
+    #     print(self.name, ": test ended!")
 
     def runmanual(self, op, a, b = 0, c = 0):
         self.top()
@@ -197,7 +197,7 @@ class file:
         self.f.close()
         subprocess.call(["g++", self.name+".cpp", "-o", self.name]) #test cpp program
         subprocess.call(["./"+self.name])
-        subprocess.call(["rm", self.name])
+        # subprocess.call(["rm", self.name])
         print(self.name, ": test ended!")
 
 # if __name__=="__main__":
