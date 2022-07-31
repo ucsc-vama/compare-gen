@@ -1,0 +1,10 @@
+{
+    "python.analysis.extraPaths": [
+        "./firrtl-operations"
+    ],
+    "files.associations": {
+        "iostream": "cpp",
+        "ostream": "cpp"
+    },
+    "cmake.configureOnOpen": true
+}

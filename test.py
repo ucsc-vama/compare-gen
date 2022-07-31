@@ -3,13 +3,17 @@ import generator
 from model_uint import *
 from random import randint
 from datetime import datetime
+from math import * 
 
 ################################################## Helper
 
 def getbitsize(var):
+    if var == 0:
+        return 1
     return ceil(log2(var+1))
 
-list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
+# list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
+list_two = ["+", "-", "*", "cat", "/", "%"]
 list_bitwise = ["pad", "shl", "shr", "<<", ">>", "tail", "head"]
 
 ##################################################### create variables
@@ -37,14 +41,17 @@ class runtests:
     def __init__(self):
         self.ts = datetime.timestamp(datetime.now())
         self.createfolder()
+        self.completed = 0
         self.count = 0
 
     def printresult(self):
-        print("tests completed:", self.count)
+        print("tests completed:", self.completed)
+        print("tests count:", self.count)
 
     def calc_variables(self, folder,filename, op, a, b):
         manual = generator.file(folder,filename)
         manual.runmanual(op,a,b)
+        self.completed += manual.getcompletedcount()
         self.count += 1
 
     def createfolder(self):
@@ -55,8 +62,8 @@ class runtests:
 
     def testpossible(self, varsize):
         for op in list_two:
-            for i in range(8,varsize): #testing only after 8. change after fix
-                for j in range(8,varsize):
+            for i in range(1,varsize): #testing only after 8. change after fix
+                for j in range(1,varsize):
                     self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op) + str(j), op, i, j)
 
     def calc_random(self,op, varsize=0):
@@ -85,6 +92,6 @@ class runtests:
 if __name__=="__main__":
     a = runtests()
     a.testcasemanual()
-    # a.testcasebrute(4)
+    a.testcasebrute(2)
     a.testcaserandom(4)
     a.printresult()

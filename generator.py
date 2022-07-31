@@ -1,10 +1,13 @@
 import sys
 import subprocess
+import os.path
 from random import randint
 sys.path.insert(1, str('./firrtl-operations'))
 from model_uint import *
 
 def getbitsize(var):
+    if var == 0:
+        return 1
     return ceil(log2(var+1))
     # return len(bin(var)[2:])
 
@@ -122,7 +125,7 @@ class file:
         f = open(self.name+".cpp", "w")
         self.f = f
         self.testcase = None
-        self.li = set()
+        self.completed = 0
 
     def settestcase(self, testcase):
         self.testcase = testcase
@@ -196,9 +199,14 @@ class file:
         self.bottom()
         self.f.close()
         subprocess.call(["g++", self.name+".cpp", "-o", self.name]) #test cpp program
-        subprocess.call(["./"+self.name])
-        # subprocess.call(["rm", self.name])
-        print(self.name, ": test ended!")
+        if os.path.exists(self.name):
+            subprocess.call(["./"+self.name])
+            subprocess.call(["rm", self.name])
+            print(self.name, ": test ended!")
+            self.completed = 1
+    
+    def getcompletedcount(self):
+        return self.completed
 
 # if __name__=="__main__":
     # subprocess.call(["rm", "Runner.cpp"])

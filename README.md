@@ -8,13 +8,17 @@ run test script:
 
 NOTES:
 
-* shift right results in error if n is greater than bitlength. "If n is greater than or
-equal to the bit-width of e, the resulting value will be zero for unsigned types and the sign
-bit for signed types. n must be non-negative." (fixed)
-* dynamic shift by bits of length greater than 4 (fixed)
->>>
-    cout << (u8 << UInt<5>("0x1f")) << endl;
->>>
 * uint "add" and comparisons of different bit length cannot be calculated.
 * uint "tail" should operate on n less than on equal to the bit width of e. however only works on less than.
 * similarly, uint "head" does not work on n equal to 0.
+* different bitlength operation doesnt work for "^", "|", "&", "<", ">", ">=", "<=", "=="
+>>>
+    UInt<2> a("0x2");
+	UInt<1> b("0x1");
+	assert((a|b) == UInt<2>("0x3"));
+>>>
+>>>
+	UInt<2> a("0x2");
+	UInt<1> b("0x1");
+	assert((a&b) == UInt<2>("0x0"));
+>>>
