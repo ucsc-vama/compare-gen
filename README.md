@@ -22,3 +22,4 @@ NOTES:
 	UInt<1> b("0x1");
 	assert((a&b) == UInt<2>("0x0"));
 >>>
+* operations between two 0 numbers result in error

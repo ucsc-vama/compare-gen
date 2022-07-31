@@ -56,7 +56,8 @@ class operation:
         uint_a = model_uint(a)
         uint_b = model_uint(b)
         result = func(uint_a, uint_b)
-        file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+        if result != None: #only bc divsion by zero is impossible
+            file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #	assert(0 == (u59221<u58024));
     def unary(file, op: str, a: int, b: int):
@@ -192,6 +193,7 @@ class file:
     #     print(self.name, ": test ended!")
 
     def runmanual(self, op, a, b = 0, c = 0):
+        print(self.name, ": test started!")
         self.top()
         self.new_one_uint(getbitsize(a),a, "a")
         self.new_one_uint(getbitsize(b),b, "b")
@@ -202,7 +204,6 @@ class file:
         if os.path.exists(self.name):
             subprocess.call(["./"+self.name])
             subprocess.call(["rm", self.name])
-            print(self.name, ": test ended!")
             self.completed = 1
     
     def getcompletedcount(self):
