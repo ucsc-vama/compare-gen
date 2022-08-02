@@ -8,9 +8,6 @@ run test script:
 
 NOTES:
 
-* uint "add" and comparisons of different bit length cannot be calculated.
-* uint "tail" should operate on n less than on equal to the bit width of e. however only works on less than.
-* similarly, uint "head" does not work on n equal to 0.
 * different bitlength operation doesnt work for "^", "|", "&", "<", ">", ">=", "<=", "=="
 >>>
     UInt<2> a("0x2");
@@ -22,10 +19,17 @@ NOTES:
 	UInt<1> b("0x1");
 	assert((a&b) == UInt<2>("0x0"));
 >>>
+
 * operations between two 0 numbers result in error
 
 * head: non negative value zero of n results in error. ignore?
 >>>
 	UInt<2> a("0x2");
 	assert(a.head<0>() == UInt<1>("0x0"));
+>>>
+
+* tail: error? not sure why
+>>>
+	UInt<1> a("0x1");
+	assert(a.tail<1>() == UInt<1>("0x0"));
 >>>

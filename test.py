@@ -12,8 +12,8 @@ def getbitsize(var):
         return 1
     return ceil(log2(var+1))
 
-# list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
-list_two = ["+", "-", "*", "cat", "/", "%"]
+list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
+# list_two = ["+", "-", "*", "cat", "/", "%"]
 list_bitwise = ["pad", "shl", "shr", "<<", ">>"]
 headtail = ["tail", "head"]
 binbit = ["andr", "orr", "xorr"]
@@ -63,10 +63,10 @@ class runtests:
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/random"])
 
     def testpossible(self, varsize):
-        # for op in list_two:
-        #     for i in range(1,varsize): #testing only after 8. change after fix
-        #         for j in range(1,varsize):
-        #             self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op) + str(j), op, i, j)
+        for op in list_two:
+            for i in range(0,varsize): #testing only after 8. change after fix
+                for j in range(0,varsize):
+                    self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op) + str(j), op, i, j)
         # for op in list_bitwise:
         #     for i in range(1,varsize):
         #         for j in range(5):
@@ -75,9 +75,9 @@ class runtests:
         #     for i in range(1,varsize):
         #         for j in range(1,i+1):
         #             self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op) + str(j), op, i, j)
-        for op in binbit:
-            for i in range(0,varsize):
-                self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op), op, i)
+        # for op in binbit:
+        #     for i in range(0,varsize):
+        #         self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op), op, i)
 
     def calc_random(self,op, varsize=0):
         a = randint(8,varsize)#testing only 4 bits
@@ -90,7 +90,7 @@ class runtests:
     ########################################################
 
     def testcasemanual(self):
-        self.calc_manual("test1", "andr", 0)
+        self.calc_manual("test1", "<", 0,0)
 
     def testcasebrute(self, maxsize=0):
         varsize = (1<<maxsize) - 1
@@ -104,7 +104,7 @@ class runtests:
 
 if __name__=="__main__":
     a = runtests()
-    a.testcasemanual()
-    # a.testcasebrute(2)
+    # a.testcasemanual()
+    a.testcasebrute(2)
     # a.testcaserandom(4)
     a.printresult()
