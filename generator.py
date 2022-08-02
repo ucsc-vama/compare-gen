@@ -11,6 +11,16 @@ def getbitsize(var):
     return ceil(log2(var+1))
     # return len(bin(var)[2:])
 
+bins = ["+", "-", "*", "/", "%", "&", "|", "^"]
+uns = ["<", "<=", ">", ">=", "==", "!="]
+bits = ["pad", "shl", "shr", "head", "tail"]
+dyn = ["<<", ">>"]
+sins = ["~"]
+comp = ["&", "|", "^"]
+binbit = ["andr", "orr", "xorr"]
+vlv = ["cat"]
+threeparm = ["bits"]
+
 class operation:
     ops = {}
     ops["+"] = model_uint.uint_add
@@ -121,6 +131,7 @@ class operation:
         file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
+    
     def __init__(self, folder, name): #initalize file
         self.name = "testcases/"+folder+"/"+name
         f = open(self.name+".cpp", "w")
@@ -143,16 +154,6 @@ class file:
         return obj
 
     def docalculate(self, op: str, a, b = 0, c = 0): #call correct operation
-        bins = ["+", "-", "*", "/", "%", "&", "|", "^"]
-        uns = ["<", "<=", ">", ">=", "==", "!="]
-        bits = ["pad", "shl", "shr", "head", "tail"]
-        dyn = ["<<", ">>"]
-        sin = ["~"]
-        comp = ["&", "|", "^"]
-        binbit = ["andr", "orr", "xorr"]
-        vlv = ["cat"]
-        threeparm = ["bits"]
-
         if op in bins:
             operation.binary(self, op, a, b)
         elif op in uns:
@@ -161,7 +162,7 @@ class file:
             operation.bitwise(self, op, a, b)
         elif op in dyn:
             operation.dynamic(self, op, a, b)
-        elif op in sin:
+        elif op in sins:
             operation.singular(self, op, a)
         elif op in comp:
             operation.comp(self, op, a, b)
@@ -196,7 +197,8 @@ class file:
         print(self.name, ": test started!")
         self.top()
         self.new_one_uint(getbitsize(a),a, "a")
-        self.new_one_uint(getbitsize(b),b, "b")
+        if op not in bits and op not in binbit: #no need to declare b
+            self.new_one_uint(getbitsize(b),b, "b")
         self.docalculate(op, a, b, c)
         self.bottom()
         self.f.close()
