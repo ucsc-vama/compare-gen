@@ -12,8 +12,8 @@ def getbitsize(var):
         return 1
     return ceil(log2(var+1))
 
-list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
-# list_two = ["+", "-", "*", "cat", "/", "%"]
+# list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
+list_two = ["+", "-", "*", "cat", "/", "%"]
 list_bitwise = ["pad", "shl", "shr", "<<", ">>"]
 headtail = ["tail", "head"]
 binbit = ["andr", "orr", "xorr"]
@@ -78,6 +78,14 @@ class runtests:
         # for op in binbit:
         #     for i in range(0,varsize):
         #         self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op), op, i)
+
+    def testsquare(self, varsize):
+        for op in list_two:
+            for i in range(varsize):
+                j = 0
+                while j < varsize:
+                    j = (j << 1) | 1
+                    self.calc_variables(str(self.ts)+"/brute","test"+ str(i) + ''.join(str(ord(c)) for c in op) + str(j), op, i, j)
 
     def calc_random(self,op, varsize=0):
         a = randint(8,varsize)#testing only 4 bits
