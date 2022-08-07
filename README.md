@@ -20,16 +20,4 @@ NOTES:
 	assert((a&b) == UInt<2>("0x0"));
 >>>
 
-* operations between two 0 numbers result in error
-
-* head: non negative value zero of n results in error. ignore?
->>>
-	UInt<2> a("0x2");
-	assert(a.head<0>() == UInt<1>("0x0"));
->>>
-
-* tail: error? not sure why
->>>
-	UInt<1> a("0x1");
-	assert(a.tail<1>() == UInt<1>("0x0"));
->>>
+* error when bit operation of hi=0 and lo=0

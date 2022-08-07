@@ -16,7 +16,6 @@ uns = ["<", "<=", ">", ">=", "==", "!="]
 bits = ["pad", "shl", "shr", "head", "tail"]
 dyn = ["<<", ">>"]
 sins = ["~"]
-comp = ["&", "|", "^"]
 binbit = ["andr", "orr", "xorr"]
 vlv = ["cat"]
 threeparm = ["bits"]
@@ -94,7 +93,7 @@ class operation:
         file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(~u0 == UInt<1>("0x0"));
-    def singular(file, op: str, a: model_uint):
+    def singular(file, op: str, a: int):
         func = operation.ops[op]
         uint_a = model_uint(a)
         result = func(uint_a)
@@ -128,7 +127,7 @@ class operation:
         func = operation.ops[op]
         uint_a = model_uint(a)
         result = func(uint_a, b, c)
-        file.f.write("\tassert((u"+str(uint_a.value)+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert((a"+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
     
@@ -164,8 +163,6 @@ class file:
             operation.dynamic(self, op, a, b)
         elif op in sins:
             operation.singular(self, op, a)
-        elif op in comp:
-            operation.comp(self, op, a, b)
         elif op in binbit:
             operation.binarybitwise(self, op, a)
         elif op in vlv:
@@ -197,7 +194,7 @@ class file:
         print(self.name, ": test started!")
         self.top()
         self.new_one_uint(getbitsize(a),a, "a")
-        if op not in bits and op not in binbit: #no need to declare b
+        if op not in bits and op not in binbit and op not in sins and op not in threeparm: #no need to declare b
             self.new_one_uint(getbitsize(b),b, "b")
         self.docalculate(op, a, b, c)
         self.bottom()
