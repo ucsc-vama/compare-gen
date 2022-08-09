@@ -4,6 +4,7 @@ from model_uint import *
 from random import randint
 from datetime import datetime
 from math import * 
+from hypothesis import example, given, strategies as st
 
 ################################################## Helper
 
@@ -48,6 +49,7 @@ class runtests:
         self.createfolder()
         self.completed = 0
         self.count = 0
+        self.fuzzylist = []
 
     def printresult(self):
         print("tests completed:", self.completed)
@@ -64,6 +66,7 @@ class runtests:
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/brute"])
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/manual"])
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/random"])
+        subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/fuzzy"])
 
     def testpossible(self, varsize):
         # for op in list_two:
@@ -109,6 +112,11 @@ class runtests:
     def calc_manual(self, filename, op, a, b=0, c=0):
         self.calc_variables(str(self.ts)+"/manual",filename, op, a, b)
 
+    @given(a=st.integers(min_value=0, max_value=10000), b=st.integers(min_value=0, max_value=10000))
+    def calc_fuzzy(self,op, a, b):
+        # self.calc_variables(str(self.ts)+"/fuzzy", "test"+str(a)+"_"+op+"_"+str(b),op,a,b)
+        self.fuzzylist.append((a,b))
+
     ########################################################
 
     def testcasemanual(self):
@@ -123,11 +131,17 @@ class runtests:
         varsize = (1<<maxsize) - 1
         self.calc_random("+",varsize)
 
+    def testcasefuzzy(self, op):
+        self.calc_fuzzy(op)
+        for a,b in self.fuzzylist:
+            self.calc_variables(str(self.ts)+"/fuzzy","test"+ str(a) +op + str(b), op, a, b)
+
     #########################################################
 
 if __name__=="__main__":
     a = runtests()
     # a.testcasemanual()
-    a.testcasebrute(3)
+    # a.testcasebrute(3)
     # a.testcaserandom(4)
+    a.testcasefuzzy("+")
     a.printresult()
