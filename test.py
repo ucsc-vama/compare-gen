@@ -4,26 +4,18 @@ from model_uint import *
 from BruteTest import *
 from RandomTest import *
 from FuzzyTest import *
-from random import randint
 from datetime import datetime
 from math import * 
 from hypothesis import example, given, strategies as st
 
 ################################################## Helper
 
+list_two = ["+", "-", "*", "cat", "/", "%"]
+
 def getbitsize(var):
     if var == 0:
         return 1
     return ceil(log2(var+1))
-
-# NEEDED: bits, ~
-# list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
-list_two = ["+", "-", "*", "cat", "/", "%"]
-list_bitwise = ["pad", "shl", "shr", "<<", ">>"]
-headtail = ["tail", "head"]
-binbit = ["andr", "orr", "xorr"]
-sins = ["~"]
-threeparm = ["bits"]
 
 class runtests:
 
@@ -58,7 +50,7 @@ class runtests:
 
     def testcasemanual(self):
         # self.calc_manual("test1", "bits", 3, 0, 0)
-        self.calc_manual("test1", "==", 7, 9)
+        self.calc_manual("test1", "==", 8, 9)
 
     def testcasebrute(self, maxsize=0):
         varsize = (1<<maxsize) - 1
@@ -75,10 +67,36 @@ class runtests:
 
     #########################################################
 
+    def getandmanual(self, i, a = 0, b=0, c=0):
+        if b in list_two:
+            self.calc_manual("test"+str(i), b, int(a), int(c))
+        else:
+            print("invalid operator")
+
+
 if __name__=="__main__":
     a = runtests()
     # a.testcasemanual()
     # a.testcasebrute(2)
     # a.testcaserandom(4)
-    a.testcasefuzzy("+")
+    # a.testcasefuzzy("+")
+
+    manualsize = int(input("number of manual tests: "))
+    for i in range(manualsize):
+        inp = input()
+        a.getandmanual(i, *inp.split())
+
+    print("====================")
+    randomsize = int(input("number of random tests: "))
+    if randomsize > 0:
+        operation = input("operation: ")
+        upperlimit = int(input("max bitlength: "))
+        for i in range(randomsize):
+            RandomTest.calc_random(a,operation,upperlimit)
+    print("====================")
+    testbrute = input("test brute force? (y/n): ") or "y"
+    if testbrute == "y":
+        upperlimit = int(input("max bitlength: "))
+        BruteTest.testpossible(a,upperlimit)
+
     a.printresult()

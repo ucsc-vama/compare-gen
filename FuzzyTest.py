@@ -29,21 +29,6 @@ def decode(lst):
     return q
 
 class FuzzyTest(unittest.TestCase):
-    # @given(text())
-    # def test_decode_inverts_encode(self, s):
-    #     self.assertEqual(decode(encode(s)), s)
-
-    # @given(s=st.text())
-    # @example(s="1")
-    # def test_decode_inverts_encode(self, s):
-    #     assert decode(encode(s)) == s
-
-    # @given(n=st.integers(min_value=1, max_value=100))
-    # @example(n=1)
-    # def test_decode_inverts_encode_long(self, n):
-    #     print(n)
-        # assert expected(n)  == real(n)
-
     @given(a=st.integers(min_value=0, max_value=10000), b=st.integers(min_value=0, max_value=10000))
     def calc_fuzzy(self,a, b):
         self.fuzzylist.append((a,b))
