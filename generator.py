@@ -191,7 +191,7 @@ class file:
     #     print(self.name, ": test ended!")
 
     def runmanual(self, op, a, b = 0, c = 0):
-        print(self.name, ": test started!")
+        # print(self.name, ": test started!")
         self.top()
         self.new_one_uint(getbitsize(a),a, "a")
         if op not in bits and op not in binbit and op not in sins and op not in threeparm: #no need to declare b
