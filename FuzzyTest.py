@@ -1,5 +1,5 @@
 import unittest
-from hypothesis import example, given, assume, strategies as st
+from hypothesis import example, given, assume, settings, strategies as st
 from hypothesis.strategies import text
 
 def encode(input_string):
@@ -29,17 +29,28 @@ def decode(lst):
     return q
 
 class FuzzyTest(unittest.TestCase):
-    @given(a=st.integers(min_value=0, max_value=10000), b=st.integers(min_value=0, max_value=10000))
-    def calc_fuzzy(self,a, b):
-        self.fuzzylist.append((a,b))
+    def calc_fuzzy(self, size):
 
-@given(min=st.integers(min_value=1, max_value=10),max=st.integers(min_value=1, max_value=10))
-# @example(n=1)
-def test_example(hi,min, max):
-    print(hi)
-    print(min, max)
-    # assert expected(n)  == real(n)
+        @given(a=st.integers(min_value=0, max_value=10000), b=st.integers(min_value=0, max_value=10000))
+        @settings(max_examples=size)
+        def inner(a, b):
+            self.fuzzyset.add((a,b))
+
+        inner()
+
+def test_example(size):
+    cre = set()
+
+    @given(a=st.integers(min_value=0, max_value=10000), b=st.integers(min_value=0, max_value=10000))
+    @settings(max_examples=size)
+    def inner(a, b):
+        cre.add((a,b))
+
+    inner()
+
+    inner()
+    print(cre)
 
 if __name__ == "__main__":
     # unittest.main()
-    test_example("hekki")
+    test_example(5)
