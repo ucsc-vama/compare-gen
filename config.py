@@ -1,4 +1,4 @@
-
+from math import *
 
 def getbitsize(var):
     if var == 0:

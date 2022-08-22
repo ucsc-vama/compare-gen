@@ -19,5 +19,3 @@ NOTES:
 	UInt<1> b("0x1");
 	assert((a&b) == UInt<2>("0x0"));
 >>>
-
-* error when bit operation of hi=0 and lo=0
