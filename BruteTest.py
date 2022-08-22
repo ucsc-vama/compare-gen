@@ -3,6 +3,7 @@ import test
 import config
 import subprocess
 import threading
+import getopt, sys
 
 class BruteTest:
 
@@ -55,7 +56,21 @@ def print_square(num):
 if __name__=="__main__":
     t = test.runtests()
     subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/brute"])
-    upperlimit = int(input("max bitlength: "))
+    arglist = sys.argv[1:]
+    options = "s:h"
+    long_options = ["size=", "help"]
+    upperlimit = 1
+    try:
+        arguments, values = getopt.getopt(arglist, options, long_options)
+        for currentArgument, currentValue in arguments:
+            if currentArgument in ("-s", "--size"):
+                upperlimit = int(currentValue)
+            elif currentArgument in ("-h", "--help"):
+                print("usage: BruteTest.py -s <max value>")
+                sys.exit()
+    except getopt.error as err:
+        print (str(err))
+    
     t1 = threading.Thread(target=BruteTest.testpossible, args=(t, upperlimit,))
     t2 = threading.Thread(target=BruteTest.testthreeparm, args=(t, upperlimit,))
     t1.start()

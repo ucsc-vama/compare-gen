@@ -1,6 +1,7 @@
 from random import randint
 import test
 import subprocess
+import getopt, sys
 
 class RandomTest:
 
@@ -16,16 +17,33 @@ class RandomTest:
 if __name__=="__main__":
     t = test.runtests()
     subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/random"])
-    randomsize = int(input("number of random tests: ")) or 0
-    if randomsize > 0:
-        op = input("operation: ")
-        maxsize = int(input("max bitlength: "))
-        varsize = (1<<maxsize) - 1
-        R = RandomTest()
-        while len(R.values) < randomsize:
-            R.findrandoms(varsize)
-        R.values = list(R.values)
-        for i in range(randomsize):
-            RandomTest.calc_random(t,op, R.values[i])
+    arglist = sys.argv[1:]
+    options = "n:s:o:h"
+    long_options = ["number=", "size=", "operator=", "help"]
+    n = 1
+    s = 1
+    op = "+"
+    try:
+        arguments, values = getopt.getopt(arglist, options, long_options)
+        for currentArgument, currentValue in arguments:
+            if currentArgument in ("-n", "--numbers"):
+                n = int(currentValue)
+            elif currentArgument in ("-s", "--size"):
+                s = int(currentValue)
+            elif currentArgument in ("-o", "--operator"):
+                o = currentValue
+            elif currentArgument in ("-h", "--help"):
+                print("usage: RandomTest.py -n <number of tests> -s <max value> -o \"<operator>\"")
+                sys.exit()
+    except getopt.error as err:
+        print (str(err))
+
+    varsize = (1<<s) - 1
+    R = RandomTest()
+    while len(R.values) < n:
+        R.findrandoms(varsize)
+    R.values = list(R.values)
+    for i in range(n):
+        RandomTest.calc_random(t,o, R.values[i])
     print("====================")
     t.printresult()

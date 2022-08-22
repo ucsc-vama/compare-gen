@@ -2,6 +2,7 @@ from math import *
 import test
 import config
 import subprocess
+import getopt, sys
 
 class ManualTest:
 
@@ -17,10 +18,9 @@ class ManualTest:
 
 if __name__=="__main__":
     t = test.runtests()
+    arglist = sys.argv[1:][0]
+
     subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/manual"])
-    manualsize = int(input("number of manual tests: ")) or 0
-    for i in range(manualsize):
-        inp = input()
-        ManualTest.getandmanual(t, i, *inp.split())
+    ManualTest.getandmanual(t, 1, *arglist.split())
     print("====================")
     t.printresult()
