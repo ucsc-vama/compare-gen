@@ -34,4 +34,4 @@ class runtests:
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/fuzzy"])
 
     def calc_manual(self, filename, op, a, b=0, c=0):
-        self.calc_variables(str(self.ts)+"/manual",filename, op, a, b)
+        self.calc_variables(str(self.ts)+"/manual",filename, op, a, b, c)

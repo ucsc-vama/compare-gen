@@ -19,3 +19,5 @@ NOTES:
 	UInt<1> b("0x1");
 	assert((a&b) == UInt<2>("0x0"));
 >>>
+
+* bit extraction operation dont work when lower and higher is equal
