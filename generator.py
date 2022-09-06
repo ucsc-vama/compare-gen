@@ -194,7 +194,7 @@ class file:
         # print(self.name, ": test started!")
         self.top()
         self.new_one_uint(getbitsize(a),a, "a")
-        if op not in bits and op not in binbit and op not in sins and op not in threeparm: #no need to declare b
+        if op not in bits and op not in binbit and op not in sins and op not in threeparm and op not in dyn: #no need to declare b
             self.new_one_uint(getbitsize(b),b, "b")
         self.docalculate(op, a, b, c)
         self.bottom()
