@@ -15,14 +15,15 @@ class runtests:
         subprocess.call(["mkdir", "testcases/"+str(self.ts)])
         self.completed = 0
         self.count = 0
-        self.fuzzyset = set()
 
     def printresult(self):
         print("tests completed:", self.completed)
         print("tests count:", self.count)
 
-    def calc_variables(self, folder,filename, op, a, b=0, c=0):
-        manual = generator.file(folder,filename)
+    def calc_variables(self, folder, op, a, b=0, c=0):
+        if op == "%" and b == 0: #division by zero
+            return
+        manual = generator.file(folder,"test"+''.join(str(ord(ch)) for ch in op)+"_" + str(a) +"_"+ str(b)+"_"+str(c))
         manual.runmanual(op,a,b,c)
         self.completed += manual.getcompletedcount()
         self.count += 1
@@ -34,4 +35,4 @@ class runtests:
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/fuzzy"])
 
     def calc_manual(self, filename, op, a, b=0, c=0):
-        self.calc_variables(str(self.ts)+"/manual",filename, op, a, b, c)
+        self.calc_variables(str(self.ts)+"/manual", op, a, b, c)

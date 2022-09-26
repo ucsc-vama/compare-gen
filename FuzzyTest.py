@@ -4,6 +4,7 @@ from hypothesis.strategies import text
 import config
 import test
 import subprocess
+import getopt, sys
 
 class FuzzyTest(unittest.TestCase):
     def calc_fuzzy(self, size):
@@ -14,14 +15,14 @@ class FuzzyTest(unittest.TestCase):
         inner()
     def test_fuzzy(self):
         for a, b in self.fuzzyset:
-            test.runtests.calc_variables(self, str(self.ts)+"/fuzzy","test"+ str(a) +"_"+''.join(str(ord(c)) for c in op)+"_" + str(b), op, a, b)
+            test.runtests.calc_variables(self, str(self.ts)+"/fuzzy", op, a, b)
 
     def test_square(self, op, size):
         a = 1
         for _ in range(size):
             b = 1
             for _ in range(size):
-                self.calc_variables(str(self.ts)+"/fuzzy","test"+ str(a) +"_"+''.join(str(ord(c)) for c in op)+"_"+str(b), op, a, b)
+                self.calc_variables(str(self.ts)+"/fuzzy", op, a, b)
                 b <<= 1
             a <<= 1
 
@@ -30,16 +31,34 @@ class FuzzyTest(unittest.TestCase):
         for _ in range(size):
             b = 1
             for _ in range(size):
-                self.calc_variables(str(self.ts)+"/fuzzy","test"+ str(a) +"_"+''.join(str(ord(c)) for c in op)+"_"+str(b), op, a, b)
+                self.calc_variables(str(self.ts)+"/fuzzy", op, a, b)
                 b = (b << 1) + 1
             a = (a << 1) | 1
 
 if __name__ == "__main__":
     t = test.runtests()
     subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/fuzzy"])
-    fuzzysize = int(input("number of fuzzy tests: "))
-    op = input("enter operation: ")
-    type = input("enter type: ")
+
+    arglist = sys.argv[1:]
+    options = "f:o:h"
+    fuzzysize = 0
+    op = "+"
+    type = "square"
+    long_options = ["fuzzysize=", "help"]
+    maxbit = 1
+    try:
+        arguments, values = getopt.getopt(arglist, options, long_options)
+        for currentArgument, currentValue in arguments:
+            if currentArgument in ("-f", "--fuzzysize"):
+                fuzzysize = int(currentValue)
+            elif currentArgument in ("-o", "--operator"):
+                op = currentValue
+            elif currentArgument in ("-h", "--help"):
+                print("usage: FuzzyTest.py -s <max value>")
+                sys.exit()
+    except getopt.error as err:
+        print (str(err))
+
     if op in config.list_two or op in config.list_bitwise:
         if type == "square":
             FuzzyTest.test_square(t, op, fuzzysize)

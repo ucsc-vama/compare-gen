@@ -9,10 +9,10 @@ class RandomTest:
         self.values = set()
 
     def findrandoms(self, varsize=0):
-        self.values.add((randint(0,varsize), randint(0,varsize)))
+        return randint(0,varsize)
 
-    def calc_random(self,op, values):
-        self.calc_variables(str(self.ts)+"/random", "test"+str(values[0])+"_" + ''.join(str(ord(c)) for c in op)+"_" + str(values[1]),op,values[0],values[1])
+    def calc_random(self,op, a, b=0, c=0):
+        self.calc_variables(str(self.ts)+"/random", op,a,b,c)
 
 if __name__=="__main__":
     t = test.runtests()
@@ -31,7 +31,7 @@ if __name__=="__main__":
             elif currentArgument in ("-s", "--size"):
                 s = int(currentValue)
             elif currentArgument in ("-o", "--operator"):
-                o = currentValue
+                op = currentValue
             elif currentArgument in ("-h", "--help"):
                 print("usage: RandomTest.py -n <number of tests> -s <max value> -o \"<operator>\"")
                 sys.exit()
@@ -40,10 +40,10 @@ if __name__=="__main__":
 
     varsize = (1<<s) - 1
     R = RandomTest()
-    while len(R.values) < n:
-        R.findrandoms(varsize)
-    R.values = list(R.values)
     for i in range(n):
-        RandomTest.calc_random(t,o, R.values[i])
+        a = R.findrandoms(varsize)
+        b = R.findrandoms(varsize)
+        c = R.findrandoms(varsize)
+        RandomTest.calc_random(t,op, a, b, c)
     print("====================")
     t.printresult()
