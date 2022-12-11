@@ -21,9 +21,3 @@ NOTES:
 >>>
 
 * bit extraction operation dont work when lower and higher is equal
-
-* dynamic shift right issue when shifting by 32
->>>
-	UInt<2> a("0x2");
-	std::cout << (a >> UInt<6>("0x20")) << std::endl;
->>>
