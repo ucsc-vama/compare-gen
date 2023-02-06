@@ -1,6 +1,8 @@
 import subprocess
 import generator
-from model_uint import *
+import sys
+sys.path.insert(1, '/firrtl-operations/')
+import uint
 from BruteTest import *
 from RandomTest import *
 from FuzzyTest import *
@@ -20,11 +22,11 @@ class runtests:
         print("tests completed:", self.completed)
         print("tests count:", self.count)
 
-    def calc_variables(self, folder, op, a, b=0, c=0):
-        if op == "%" and b == 0: #division by zero
+    def calc_variables(self, folder, type, op, a, b=0, c=0):
+        if (op == "%" or op == "/") and b == 0: #division by zero
             return
-        manual = generator.file(folder,"test"+''.join(str(ord(ch)) for ch in op)+"_" + str(a) +"_"+ str(b)+"_"+str(c))
-        manual.runmanual(op,a,b,c)
+        manual = generator.file(folder,"test"+str(type)+''.join(str(ord(ch)) for ch in op)+"_" + str(a) +"_"+ str(b)+"_"+str(c))
+        manual.runmanual(type,op,a,b,c)
         self.completed += manual.getcompletedcount()
         self.count += 1
 
@@ -34,5 +36,5 @@ class runtests:
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/random"])
         subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/fuzzy"])
 
-    def calc_manual(self, filename, op, a, b=0, c=0):
-        self.calc_variables(str(self.ts)+"/manual", op, a, b, c)
+    def calc_manual(self, type, op, a, b=0, c=0):
+        self.calc_variables(str(self.ts)+"/manual", type, op, a, b, c)

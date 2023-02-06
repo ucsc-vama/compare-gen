@@ -1,9 +1,11 @@
+from math import ceil, log2
 import sys
 import subprocess
 import os.path
 from random import randint
 sys.path.insert(1, str('./firrtl-operations'))
-from model_uint import *
+import uint
+import sint
 
 def getbitsize(var):
     if var == 0:
@@ -20,117 +22,193 @@ binbit = ["andr", "orr", "xorr"]
 vlv = ["cat"]
 threeparm = ["bits"]
 
-class operation:
-    ops = {}
-    ops["+"] = model_uint.uint_add
-    ops["-"] = model_uint.uint_sub
-    ops["*"] = model_uint.uint_mul
-    ops["/"] = model_uint.uint_div
-    ops["%"] = model_uint.uint_rem
-    ops["<"] = model_uint.uint_lt
-    ops["<="] = model_uint.uint_leq
-    ops[">"] = model_uint.uint_gt
-    ops[">="] = model_uint.uint_geq
-    ops["=="] = model_uint.uint_eq
-    ops["!="] = model_uint.uint_neq
-    ops["pad"] = model_uint.uint_pad
-    ops["shl"] = model_uint.uint_shl
-    ops["shr"] = model_uint.uint_shr
-    ops["<<"] = model_uint.uint_dshl
-    ops[">>"] = model_uint.uint_dshr
-    ops["~"] = model_uint.uint_not
-    ops["&"] = model_uint.uint_and
-    ops["|"] = model_uint.uint_or
-    ops["^"] = model_uint.uint_xor
-    ops["andr"] = model_uint.uint_andr
-    ops["orr"] = model_uint.uint_orr
-    ops["xorr"] = model_uint.uint_xorr
-    ops["cat"] = model_uint.uint_cat
-    ops["bits"] = model_uint.uint_bits
-    ops["tail"] = model_uint.uint_tail
-    ops["head"] = model_uint.uint_head
+class u_operation:
+    u_ops = {}
+    u_ops["+"] = uint.model_uint.uint_add
+    u_ops["-"] = uint.model_uint.uint_sub
+    u_ops["*"] = uint.model_uint.uint_mul
+    u_ops["/"] = uint.model_uint.uint_div
+    u_ops["%"] = uint.model_uint.uint_rem
+    u_ops["<"] = uint.model_uint.uint_lt
+    u_ops["<="] = uint.model_uint.uint_leq
+    u_ops[">"] = uint.model_uint.uint_gt
+    u_ops[">="] = uint.model_uint.uint_geq
+    u_ops["=="] = uint.model_uint.uint_eq
+    u_ops["!="] = uint.model_uint.uint_neq
+    u_ops["pad"] = uint.model_uint.uint_pad
+    u_ops["shl"] = uint.model_uint.uint_shl
+    u_ops["shr"] = uint.model_uint.uint_shr
+    u_ops["<<"] = uint.model_uint.uint_dshl
+    u_ops[">>"] = uint.model_uint.uint_dshr
+    u_ops["~"] = uint.model_uint.uint_not
+    u_ops["&"] = uint.model_uint.uint_and
+    u_ops["|"] = uint.model_uint.uint_or
+    u_ops["^"] = uint.model_uint.uint_xor
+    u_ops["andr"] = uint.model_uint.uint_andr
+    u_ops["orr"] = uint.model_uint.uint_orr
+    u_ops["xorr"] = uint.model_uint.uint_xorr
+    u_ops["cat"] = uint.model_uint.uint_cat
+    u_ops["bits"] = uint.model_uint.uint_bits
+    u_ops["tail"] = uint.model_uint.uint_tail
+    u_ops["head"] = uint.model_uint.uint_head
+
+    s_ops = {}
+    s_ops["+"] = sint.model_sint.sint_add
+    s_ops["-"] = sint.model_sint.sint_sub
+    s_ops["*"] = sint.model_sint.sint_mul
+    s_ops["/"] = sint.model_sint.sint_div
+    s_ops["%"] = sint.model_sint.sint_mod
+    s_ops["<"] = sint.model_sint.sint_lt
+    s_ops["<="] = sint.model_sint.sint_leq
+    s_ops[">"] = sint.model_sint.sint_gt
+    s_ops[">="] = sint.model_sint.sint_geq
+    s_ops["=="] = sint.model_sint.sint_eq
+    s_ops["!="] = sint.model_sint.sint_neq
+    s_ops["pad"] = sint.model_sint.sint_pad
+    s_ops["shl"] = sint.model_sint.sint_shl
+    s_ops["shr"] = sint.model_sint.sint_shr
+    s_ops["<<"] = sint.model_sint.sint_dshl
+    s_ops[">>"] = sint.model_sint.sint_dshr
+    s_ops["~"] = sint.model_sint.sint_not
+    s_ops["&"] = sint.model_sint.sint_and
+    s_ops["|"] = sint.model_sint.sint_or
+    s_ops["^"] = sint.model_sint.sint_xor
+    s_ops["andr"] = sint.model_sint.sint_andr
+    s_ops["orr"] = sint.model_sint.sint_orr
+    s_ops["xorr"] = sint.model_sint.sint_xorr
+    s_ops["cat"] = sint.model_sint.sint_cat
+    s_ops["bits"] = sint.model_sint.sint_bits
+    s_ops["tail"] = sint.model_sint.sint_tail
+    s_ops["head"] = sint.model_sint.sint_head
 
     def randcreate(digitlength: int) -> int:
         return randint(2**(digitlength-1), (2**digitlength)-1)
 
-    def declareVariable(f, num: model_uint):
+    def declareVariable(f, num: uint.model_uint):
         f.write("\tUInt<" + str(num.bitsize) + "> u" + str(num.value) + "(\"" + str(hex(num.value)) + "\");\n")
 
-    def declareOneVariable(f, num: model_uint, name: str):
+    def declareOneVariable(f, num: uint.model_uint, name: str):
         f.write("\tUInt<" + str(num.bitsize) + "> " + name + "(\"" + str(hex(num.value)) + "\");\n")
 
     #	assert(u0+u0 == UInt<1>("0x0"));
-    def binary(file, op: str, a, b):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
-        uint_b = model_uint(b)
+    def binary(file, func, op: str, a, b):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
+        uint_b = uint.model_uint(b)
         result = func(uint_a, uint_b)
         if result != None: #only bc divsion by zero is impossible
             file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #	assert(0 == (u59221<u58024));
-    def unary(file, op: str, a: int, b: int):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
-        uint_b = model_uint(b)
+    def unary(file, func, op: str, a: int, b: int):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
+        uint_b = uint.model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert("+str(result.value) +" == (a"+op+"b"+"));\n")
 
     #	assert(u59221.pad<3>() == UInt<16>("0xe755"));
-    def bitwise(file, op: str, a: int, n):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
+    def bitwise(file, func, op: str, a: int, n):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
         result = func(uint_a, n)
         file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
-    def dynamic(file, op: str, a: int, b):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
+    def dynamic(file, func, op: str, a: int, b):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
         b_size = getbitsize(b)
-        uint_b = model_uint(b, b_size)
+        uint_b = uint.model_uint(b, b_size)
         result = func(uint_a, uint_b)
         file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(~u0 == UInt<1>("0x0"));
-    def singular(file, op: str, a: int):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
+    def singular(file, func, op: str, a: int):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
         result = func(uint_a)
         file.f.write("\tassert("+op+"a"+" == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert(u15%u15 == UInt<4>("0x0"));
-    def comp(file, op: str, a: int, b: int):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
-        uint_b = model_uint(b)
+    def comp(file, func, op: str, a: int, b: int):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
+        uint_b = uint.model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert((a"+op+"b"+ ") == UInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
     #   assert((u4059599200.andr()) == UInt<1>("0x0"));
-    def binarybitwise(file, op: str, a: int):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
+    def binarybitwise(file, func, op: str, a: int):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
         result = func(uint_a)
         file.f.write("\tassert((a"+"."+op+"()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u4.cat(u5)) == UInt<1>("0x1"));
-    def vlv(file, op: str, a: int, b: int):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
-        uint_b = model_uint(b)
+    def vlv(file, func, op: str, a: int, b: int):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
+        uint_b = uint.model_uint(b)
         result = func(uint_a, uint_b)
         file.f.write("\tassert(a"+"."+op+"(b"+") == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
     #   assert((u4.bits<0,1>) == UInt<1>("0x1"));
-    def threeparm(file, op: str, a: int, b: int, c: int):
-        func = operation.ops[op]
-        uint_a = model_uint(a)
+    def threeparm(file, func, op: str, a: int, b: int, c: int):
+        # func = operation.u_ops[op]
+        uint_a = uint.model_uint(a)
         result = func(uint_a, b, c)
         file.f.write("\tassert((a"+"."+op+"<"+str(b)+","+str(c)+">()) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
+class s_operation:
+    s_ops = {}
+    s_ops["+"] = sint.model_sint.sint_add
+    s_ops["-"] = sint.model_sint.sint_sub
+    s_ops["*"] = sint.model_sint.sint_mul
+    s_ops["/"] = sint.model_sint.sint_div
+    s_ops["%"] = sint.model_sint.sint_mod
+    s_ops["<"] = sint.model_sint.sint_lt
+    s_ops["<="] = sint.model_sint.sint_leq
+    s_ops[">"] = sint.model_sint.sint_gt
+    s_ops[">="] = sint.model_sint.sint_geq
+    s_ops["=="] = sint.model_sint.sint_eq
+    s_ops["!="] = sint.model_sint.sint_neq
+    s_ops["pad"] = sint.model_sint.sint_pad
+    s_ops["shl"] = sint.model_sint.sint_shl
+    s_ops["shr"] = sint.model_sint.sint_shr
+    s_ops["<<"] = sint.model_sint.sint_dshl
+    s_ops[">>"] = sint.model_sint.sint_dshr
+    s_ops["~"] = sint.model_sint.sint_not
+    s_ops["&"] = sint.model_sint.sint_and
+    s_ops["|"] = sint.model_sint.sint_or
+    s_ops["^"] = sint.model_sint.sint_xor
+    s_ops["andr"] = sint.model_sint.sint_andr
+    s_ops["orr"] = sint.model_sint.sint_orr
+    s_ops["xorr"] = sint.model_sint.sint_xorr
+    s_ops["cat"] = sint.model_sint.sint_cat
+    s_ops["bits"] = sint.model_sint.sint_bits
+    s_ops["tail"] = sint.model_sint.sint_tail
+    s_ops["head"] = sint.model_sint.sint_head
+
+    def randcreate(digitlength: int) -> int:
+        return randint(2**(digitlength-1), (2**digitlength)-1)
+
+    def declareVariable(f, num: sint.model_sint):
+        f.write("\tSInt<" + str(num.bitsize) + "> u" + str(num.value) + "(\"" + str(hex(num.value)) + "\");\n")
+
+    def declareOneVariable(f, num: sint.model_sint, name: str):
+        f.write("\tSInt<" + str(num.bitsize) + "> " + name + "(\"" + str(hex(num.value)) + "\");\n")
+
+    #	assert(u0+u0 == SInt<1>("0x0"));
+    def binary(file, func, op: str, a, b):
+        sint_a = sint.model_sint(a)
+        sint_b = sint.model_sint(b)
+        result = func(sint_a, sint_b)
+        if result != None: #only bc divsion by zero is impossible
+            file.f.write("\tassert((a"+op+"b"+ ") == SInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
+
+
 class file:
-    
     def __init__(self, folder, name): #initalize file
         self.name = "testcases/"+folder+"/"+name
         f = open(self.name+".cpp", "w")
@@ -141,37 +219,66 @@ class file:
     def settestcase(self, testcase):
         self.testcase = testcase
 
-    def new_uint(self, bitsize: int, value: int) -> model_uint:# create model_uint and declare in cpp
-        obj = model_uint(value, bitsize)
-        operation.declareVariable(self.f, obj)
-        # self.li.add(value)
+    def new_uint(self, bitsize: int, value: int) -> uint.model_uint:# create uint.model_uint and declare in cpp
+        obj = uint.model_uint(value, bitsize)
+        u_operation.declareVariable(self.f, obj)
         return obj
 
-    def new_one_uint(self, bitsize: int, value: int, name) -> model_uint:# create model_uint and declare in cpp
-        obj = model_uint(value, bitsize)
-        operation.declareOneVariable(self.f, obj, name)
+    def new_one_uint(self, bitsize: int, value: int, name) -> uint.model_uint:# create uint.model_uint and declare in cpp
+        obj = uint.model_uint(value, bitsize)
+        u_operation.declareOneVariable(self.f, obj, name)
+        return obj
+    
+    def new_one_sint(self, bitsize: int, value: int, name) -> sint.model_sint:# create uint.model_uint and declare in cpp
+        obj = sint.model_sint(value, bitsize)
+        s_operation.declareOneVariable(self.f, obj, name)
         return obj
 
     def docalculate(self, op: str, a, b = 0, c = 0): #call correct operation
-        if op in bins:
-            operation.binary(self, op, a, b)
-        elif op in uns:
-            operation.unary(self, op, a, b)
-        elif op in bits:
-            operation.bitwise(self, op, a, b)
-        elif op in dyn:
-            operation.dynamic(self, op, a, b)
-        elif op in sins:
-            operation.singular(self, op, a)
-        elif op in binbit:
-            operation.binarybitwise(self, op, a)
-        elif op in vlv:
-            operation.vlv(self, op, a, b)
-        elif op in threeparm:
-            operation.threeparm(self, op, a, b, c)
+        func = u_operation.u_ops[op]
 
-    def top(self):#header and main
-        self.f.write("#include \"../../../firrtl-sig/uint.h\"\n")
+        if op in bins:
+            u_operation.binary(self, func, op, a, b)
+        elif op in uns:
+            u_operation.unary(self, func, op, a, b)
+        elif op in bits:
+            u_operation.bitwise(self, func, op, a, b)
+        elif op in dyn:
+            u_operation.dynamic(self, func, op, a, b)
+        elif op in sins:
+            u_operation.singular(self, func, op, a)
+        elif op in binbit:
+            u_operation.binarybitwise(self, func, op, a)
+        elif op in vlv:
+            u_operation.vlv(self, func, op, a, b)
+        elif op in threeparm:
+            u_operation.threeparm(self, func, op, a, b, c)
+
+    def s_docalculate(self, op: str, a, b = 0, c = 0): #call correct operation
+        func = s_operation.s_ops[op]
+
+        if op in bins:
+            s_operation.binary(self, func, op, a, b)
+        # elif op in uns:
+        #     u_operation.unary(self, func, op, a, b)
+        # elif op in bits:
+        #     u_operation.bitwise(self, func, op, a, b)
+        # elif op in dyn:
+        #     u_operation.dynamic(self, func, op, a, b)
+        # elif op in sins:
+        #     u_operation.singular(self, func, op, a)
+        # elif op in binbit:
+        #     u_operation.binarybitwise(self, func, op, a)
+        # elif op in vlv:
+        #     u_operation.vlv(self, func, op, a, b)
+        # elif op in threeparm:
+            # u_operation.threeparm(self, func, op, a, b, c)
+
+    def top(self, type):#header and main
+        if type == "uint":
+            self.f.write("#include \"../../../firrtl-sig/uint.h\"\n")
+        else:
+            self.f.write("#include \"../../../firrtl-sig/sint.h\"\n")
         self.f.write("#include <assert.h>\n")
         self.f.write("int main() {\n\n")
 
@@ -180,23 +287,18 @@ class file:
         self.f.write("\treturn 0;\n")
         self.f.write("}")
 
-    # def runprogram(self,maxsize = 0):
-    #     self.top()
-    #     self.testcase(self, maxsize) # run test
-    #     self.bottom()
-    #     self.f.close()
-    #     subprocess.call(["g++", self.name, "-o", "output"]) #test cpp program
-    #     subprocess.call(["./output"])
-    #     subprocess.call(["rm", "output"])
-    #     print(self.name, ": test ended!")
-
-    def runmanual(self, op, a, b = 0, c = 0):
-        # print(self.name, ": test started!")
-        self.top()
-        self.new_one_uint(getbitsize(a),a, "a")
-        if op not in bits and op not in binbit and op not in sins and op not in threeparm and op not in dyn: #no need to declare b
-            self.new_one_uint(getbitsize(b),b, "b")
-        self.docalculate(op, a, b, c)
+    def runmanual(self, type, op, a, b = 0, c = 0):
+        self.top(type)
+        if type == "uint":
+            self.new_one_uint(getbitsize(a),a, "a")
+            if op not in bits and op not in binbit and op not in sins and op not in threeparm and op not in dyn: #no need to declare b
+                self.new_one_uint(getbitsize(b),b, "b")
+            self.docalculate(op, a, b, c)
+        else:#sint
+            self.new_one_sint(getbitsize(a),a, "a")
+            if op not in bits and op not in binbit and op not in sins and op not in threeparm and op not in dyn: #no need to declare b
+                self.new_one_sint(getbitsize(b),b, "b")
+            self.s_docalculate(op, a, b, c)
         self.bottom()
         self.f.close()
         subprocess.call(["g++", self.name+".cpp", "-o", self.name]) #test cpp program
@@ -207,12 +309,3 @@ class file:
     
     def getcompletedcount(self):
         return self.completed
-
-# if __name__=="__main__":
-    # subprocess.call(["rm", "Runner.cpp"])
-    # test = file("Runner1.cpp", file.testcase1)
-    # test.runprogram()
-    #test = file(file.testcase2)
-    #test.runprogram()
-    #subprocess.call(["rm", "Runner.cpp"])
-

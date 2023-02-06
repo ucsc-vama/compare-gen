@@ -1,1 +1,1 @@
-__all__ = ["firrtl_operations/model_uint"]
+__all__ = ["firrtl_operations/uint","firrtl_operations/sint"]
