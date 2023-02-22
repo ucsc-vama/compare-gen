@@ -36,7 +36,7 @@ if __name__=="__main__":
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--help"):
                 print("syntax:")
-                print("python3 ManualTest.py [sint/uint] [operand1] [+, -, *, /, pad, shl, shr, <<, >>] [operand2]")
+                print("python3 ManualTest.py [sint/uint] [operand1] [+, -, *, /, lt, lteq, gt, gteq, eq, neq, pad, shl, shr, <<, >>] [operand2]")
                 print("python3 ManualTest.py [sint/uint] [operand1] [head, tail] [operand2]")
                 print("python3 ManualTest.py [sint/uint] [andr, orr, xoor, ~] [operand]")
                 print("python3 ManualTest.py [sint/uint] [operand] bits [high] [low]")

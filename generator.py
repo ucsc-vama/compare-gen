@@ -14,7 +14,7 @@ def getbitsize(var):
     # return len(bin(var)[2:])
 
 bins = ["+", "-", "*", "/", "%", "&", "|", "^"]
-uns = ["<", "<=", ">", ">=", "==", "!="]
+uns = ["lt", "lteq", "gteq", "gteq", "eq", "neq"]
 bits = ["pad", "shl", "shr", "head", "tail"]
 dyn = ["<<", ">>"]
 sins = ["~"]
@@ -29,12 +29,12 @@ class u_operation:
     u_ops["*"] = uint.model_uint.uint_mul
     u_ops["/"] = uint.model_uint.uint_div
     u_ops["%"] = uint.model_uint.uint_rem
-    u_ops["<"] = uint.model_uint.uint_lt
-    u_ops["<="] = uint.model_uint.uint_leq
-    u_ops[">"] = uint.model_uint.uint_gt
-    u_ops[">="] = uint.model_uint.uint_geq
-    u_ops["=="] = uint.model_uint.uint_eq
-    u_ops["!="] = uint.model_uint.uint_neq
+    u_ops["lt"] = [uint.model_uint.uint_lt, "<"]
+    u_ops["lteq"] = [uint.model_uint.uint_leq, "<="]
+    u_ops["gt"] = [uint.model_uint.uint_gt, ">"]
+    u_ops["gteq"] = [uint.model_uint.uint_geq, ">="]
+    u_ops["eq"] = [uint.model_uint.uint_eq, "=="]
+    u_ops["neq"] = [uint.model_uint.uint_neq, "!="]
     u_ops["pad"] = uint.model_uint.uint_pad
     u_ops["shl"] = uint.model_uint.uint_shl
     u_ops["shr"] = uint.model_uint.uint_shr
@@ -51,35 +51,6 @@ class u_operation:
     u_ops["bits"] = uint.model_uint.uint_bits
     u_ops["tail"] = uint.model_uint.uint_tail
     u_ops["head"] = uint.model_uint.uint_head
-
-    s_ops = {}
-    s_ops["+"] = sint.model_sint.sint_add
-    s_ops["-"] = sint.model_sint.sint_sub
-    s_ops["*"] = sint.model_sint.sint_mul
-    s_ops["/"] = sint.model_sint.sint_div
-    s_ops["%"] = sint.model_sint.sint_mod
-    s_ops["<"] = sint.model_sint.sint_lt
-    s_ops["<="] = sint.model_sint.sint_leq
-    s_ops[">"] = sint.model_sint.sint_gt
-    s_ops[">="] = sint.model_sint.sint_geq
-    s_ops["=="] = sint.model_sint.sint_eq
-    s_ops["!="] = sint.model_sint.sint_neq
-    s_ops["pad"] = sint.model_sint.sint_pad
-    s_ops["shl"] = sint.model_sint.sint_shl
-    s_ops["shr"] = sint.model_sint.sint_shr
-    s_ops["<<"] = sint.model_sint.sint_dshl
-    s_ops[">>"] = sint.model_sint.sint_dshr
-    s_ops["~"] = sint.model_sint.sint_not
-    s_ops["&"] = sint.model_sint.sint_and
-    s_ops["|"] = sint.model_sint.sint_or
-    s_ops["^"] = sint.model_sint.sint_xor
-    s_ops["andr"] = sint.model_sint.sint_andr
-    s_ops["orr"] = sint.model_sint.sint_orr
-    s_ops["xorr"] = sint.model_sint.sint_xorr
-    s_ops["cat"] = sint.model_sint.sint_cat
-    s_ops["bits"] = sint.model_sint.sint_bits
-    s_ops["tail"] = sint.model_sint.sint_tail
-    s_ops["head"] = sint.model_sint.sint_head
 
     def randcreate(digitlength: int) -> int:
         return randint(2**(digitlength-1), (2**digitlength)-1)
@@ -167,12 +138,12 @@ class s_operation:
     s_ops["*"] = sint.model_sint.sint_mul
     s_ops["/"] = sint.model_sint.sint_div
     s_ops["%"] = sint.model_sint.sint_mod
-    s_ops["<"] = sint.model_sint.sint_lt
-    s_ops["<="] = sint.model_sint.sint_leq
-    s_ops[">"] = sint.model_sint.sint_gt
-    s_ops[">="] = sint.model_sint.sint_geq
-    s_ops["=="] = sint.model_sint.sint_eq
-    s_ops["!="] = sint.model_sint.sint_neq
+    s_ops["lt"] = [sint.model_sint.sint_lt, "<"]
+    s_ops["lteq"] = [sint.model_sint.sint_leq, "<="]
+    s_ops["gt"] = [sint.model_sint.sint_gt, ">"]
+    s_ops["gteq"] = [sint.model_sint.sint_geq, ">="]
+    s_ops["eq"] = [sint.model_sint.sint_eq, "=="]
+    s_ops["neq"] = [sint.model_sint.sint_neq, "!="]
     s_ops["pad"] = sint.model_sint.sint_pad
     s_ops["shl"] = sint.model_sint.sint_shl
     s_ops["shr"] = sint.model_sint.sint_shr
@@ -207,6 +178,28 @@ class s_operation:
         if result != None: #only bc divsion by zero is impossible
             file.f.write("\tassert((a"+op+"b"+ ") == SInt<"+str(result.bitsize)+">(\"" + str(hex(result.value)) + "\"));\n")
 
+    #   assert(0 == (false<(a<b))));
+    def unary(file, func, op: str, a: int, b: int):
+        sint_a = sint.model_sint(a)
+        sint_b = sint.model_sint(b)
+        result = func(sint_a, sint_b)
+        file.f.write("\tassert("+str(result.value) +" == (a"+op+"b"+"));\n")
+
+    #	assert(u59221.pad<3>() == UInt<16>("0xe755"));
+    def bitwise(file, func, op: str, a: int, n):
+        # func = operation.u_ops[op]
+        sint_a = sint.model_sint(a)
+        result = func(sint_a, n)
+        file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+
+        #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
+    def dynamic(file, func, op: str, a: int, b):
+        # func = operation.u_ops[op]
+        sint_a = sint.model_sint(a)
+        b_size = getbitsize(b)
+        sint_b = sint.model_sint(b, b_size)
+        result = func(sint_a, sint_b)
+        file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(sint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
 
 class file:
     def __init__(self, folder, name): #initalize file
@@ -240,7 +233,7 @@ class file:
         if op in bins:
             u_operation.binary(self, func, op, a, b)
         elif op in uns:
-            u_operation.unary(self, func, op, a, b)
+            u_operation.unary(self, func[0], func[1], a, b)
         elif op in bits:
             u_operation.bitwise(self, func, op, a, b)
         elif op in dyn:
@@ -259,12 +252,12 @@ class file:
 
         if op in bins:
             s_operation.binary(self, func, op, a, b)
-        # elif op in uns:
-        #     u_operation.unary(self, func, op, a, b)
-        # elif op in bits:
-        #     u_operation.bitwise(self, func, op, a, b)
-        # elif op in dyn:
-        #     u_operation.dynamic(self, func, op, a, b)
+        elif op in uns:
+            s_operation.unary(self, func[0], func[1], a, b)
+        elif op in bits:
+            s_operation.bitwise(self, func, op, a, b)
+        elif op in dyn:
+            s_operation.dynamic(self, func, op, a, b)
         # elif op in sins:
         #     u_operation.singular(self, func, op, a)
         # elif op in binbit:

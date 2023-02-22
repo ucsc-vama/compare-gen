@@ -10,7 +10,7 @@ NOTES:
 
 * different bitlength operation doesnt work for "^", "|", "&", "<", ">", ">=", "<=", "=="
 >>>
-    UInt<2> a("0x2");
+  UInt<2> a("0x2");
 	UInt<1> b("0x1");
 	assert((a|b) == UInt<2>("0x3"));
 >>>
@@ -21,3 +21,8 @@ NOTES:
 >>>
 
 * bit extraction operation dont work when lower and higher is equal
+
+
+
+TODO:
+get dshr and dshl in manual test

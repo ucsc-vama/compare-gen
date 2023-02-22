@@ -2,7 +2,7 @@ from math import *
 import test
 import config
 import subprocess
-import threading
+# import threading
 import getopt, sys
 
 class BruteTest:
@@ -55,12 +55,6 @@ if __name__=="__main__":
 
     maxbit = 1<<maxbit -1
 
-    t1 = threading.Thread(target=BruteTest.testpossible, args=(t, maxbit,))
-    # t2 = threading.Thread(target=BruteTest.testthreeparm, args=(t, maxbit,))
-    t1.start()
-    # t2.start()
-    t1.join()
-    # t2.join()
-    # BruteTest.testpossible(t,upperlimit)
+    BruteTest.testpossible(t, maxbit)
     print("====================")
     t.printresult()

@@ -6,7 +6,7 @@ def getbitsize(var):
     return ceil(log2(var+1))
 
 # list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
-list_two = ["+", "-", "*", "cat", "/", "%"]
+list_two = ["+", "-", "*", "cat", "lt", "lteq", "gt", "gteq", "eq", "neq", "/", "%"]
 list_bitwise = ["pad", "shl", "shr", "<<", ">>"]
 headtail = ["tail", "head"]
 binbit = ["andr", "orr", "xorr"]

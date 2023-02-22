@@ -7,7 +7,7 @@ using namespace std;
 
 int main() {
 
-    SInt<4> s0(0x0);
+    SInt<4> s0("0x0");
 	SInt<4> s1(0x1);
     SInt<4> s2(0x2);
 	SInt<4> s3(0x3);
@@ -31,6 +31,8 @@ int main() {
 
     SInt<158> s158("0x381c1fe6bca6875922fe381c1fe6bca6875922fe");
 
+
+    UInt<80> b80u("0xefbe8ae0d38ab7f36dda");
     // cout << UInt<16>(~s6dba) << endl;
     // cout << UInt<16>(~sccb2) << endl;
     // cout << ~s158 << endl;
@@ -63,10 +65,16 @@ int main() {
     //head, tail
     //ERROR. cannot do tail operation with bitwidth equal to n
     // Issue where result is 0.
-    cout << (s3.tail<3>()) << endl;
-    cout << (s6dba.tail<3>()) << endl;
-    cout << (b80s.tail<79>()) << endl; 
-    cout << (s158.tail<63>()) << endl;
+    // cout << (s3.tail<3>()) << endl;
+    // cout << (s6dba.tail<3>()) << endl;
+    // cout << (b80s.tail<79>()) << endl; 
+    // cout << (s158.tail<63>()) << endl;
 
+    // cout << (b80s.tail<80>()) << endl;
+    // cout << (b80s.head<0>()) << endl;
+    // cout << (b80u.tail<80>()) << endl;
+
+    cout << (s1 >> UInt<2>(2)) << endl;
+     
     return 0;
 }
