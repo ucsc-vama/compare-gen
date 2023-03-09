@@ -7,7 +7,7 @@ def getbitsize(var):
 
 # list_two = ["+", "-", "*", "<", "<=", ">", ">=", "==", "!=", "&", "|", "^", "cat", "/", "%"]
 list_two = ["+", "-", "*", "cat", "lt", "lteq", "gt", "gteq", "eq", "neq", "/", "%"]
-list_bitwise = ["pad", "shl", "shr", "<<", ">>"]
+list_bitwise = ["pad", "shl", "shr", "dshl", "dshr"]
 headtail = ["tail", "head"]
 binbit = ["andr", "orr", "xorr"]
 sins = ["~"]

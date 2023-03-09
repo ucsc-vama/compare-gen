@@ -6,6 +6,22 @@ import getopt, sys
 
 class ManualTest:
 
+    def test(t, type, a=0, b="+", c=0, d=0):
+        if b in config.list_two:
+            t.calc_variables(type, b, int(a), int(c))
+        elif b in config.list_bitwise:
+            t.calc_variables(type, b, int(a), int(c))
+        elif b in config.headtail:
+            t.calc_variables(type, b, int(a), int(c))
+        elif a in config.binbit:
+            t.calc_variables(type, a, int(b))
+        elif a in config.sins:
+            t.calc_variables(type, a, int(b))
+        elif b in config.threeparm:
+            t.calc_variables(type, b, int(a), int(c), int(d))
+        else:
+            print("invalid operator")
+
     def getandmanual(self, type, a = 0, b=0, c=0, d=0):
         if b in config.list_two:
             self.calc_manual(type, b, int(a), int(c))
@@ -28,7 +44,7 @@ if __name__=="__main__":
         print("Usage: ManualTest.py -h <help>")
         sys.exit()
 
-    arglist = sys.argv[1:]
+    arglist = sys.argv[1]
     options = "h"
     long_options = ["help"]
     try:
@@ -36,15 +52,14 @@ if __name__=="__main__":
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-h", "--help"):
                 print("syntax:")
-                print("python3 ManualTest.py [sint/uint] [operand1] [+, -, *, /, lt, lteq, gt, gteq, eq, neq, pad, shl, shr, <<, >>] [operand2]")
-                print("python3 ManualTest.py [sint/uint] [operand1] [head, tail] [operand2]")
-                print("python3 ManualTest.py [sint/uint] [andr, orr, xoor, ~] [operand]")
-                print("python3 ManualTest.py [sint/uint] [operand] bits [high] [low]")
+                # print("python3 ManualTest.py [sint/uint] [operand1] [+, -, *, /, lt, lteq, gt, gteq, eq, neq, pad, shl, shr, dshl, dshr] [operand2]")
                 sys.exit()
     except getopt.error as err:
         print (str(err))
 
-    subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/manual"])
-    ManualTest.getandmanual(t, *arglist)
+    # subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/manual"])
+    # ManualTest.getandmanual(t, *arglist)
+    print(arglist)
+
     print("====================")
-    t.printresult()
+    # t.printresult()

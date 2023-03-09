@@ -16,7 +16,7 @@ def getbitsize(var):
 bins = ["+", "-", "*", "/", "%", "&", "|", "^"]
 uns = ["lt", "lteq", "gteq", "gteq", "eq", "neq"]
 bits = ["pad", "shl", "shr", "head", "tail"]
-dyn = ["<<", ">>"]
+dyn = ["dshl", "dshr"]
 sins = ["~"]
 binbit = ["andr", "orr", "xorr"]
 vlv = ["cat"]
@@ -38,8 +38,8 @@ class u_operation:
     u_ops["pad"] = uint.model_uint.uint_pad
     u_ops["shl"] = uint.model_uint.uint_shl
     u_ops["shr"] = uint.model_uint.uint_shr
-    u_ops["<<"] = uint.model_uint.uint_dshl
-    u_ops[">>"] = uint.model_uint.uint_dshr
+    u_ops["dshl"] = [uint.model_uint.uint_dshl, "<<"]
+    u_ops["dshr"] = [uint.model_uint.uint_dshr, ">>"]
     u_ops["~"] = uint.model_uint.uint_not
     u_ops["&"] = uint.model_uint.uint_and
     u_ops["|"] = uint.model_uint.uint_or
@@ -147,8 +147,8 @@ class s_operation:
     s_ops["pad"] = sint.model_sint.sint_pad
     s_ops["shl"] = sint.model_sint.sint_shl
     s_ops["shr"] = sint.model_sint.sint_shr
-    s_ops["<<"] = sint.model_sint.sint_dshl
-    s_ops[">>"] = sint.model_sint.sint_dshr
+    s_ops["dshl"] = [sint.model_sint.sint_dshl, "<<"]
+    s_ops["dshr"] = [sint.model_sint.sint_dshr, ">>"]
     s_ops["~"] = sint.model_sint.sint_not
     s_ops["&"] = sint.model_sint.sint_and
     s_ops["|"] = sint.model_sint.sint_or
@@ -235,7 +235,7 @@ class file:
         elif op in uns:
             u_operation.unary(self, func[0], func[1], a, b)
         elif op in bits:
-            u_operation.bitwise(self, func, op, a, b)
+            u_operation.bitwise(self, func[0], func[1], a, b)
         elif op in dyn:
             u_operation.dynamic(self, func, op, a, b)
         elif op in sins:
@@ -257,7 +257,7 @@ class file:
         elif op in bits:
             s_operation.bitwise(self, func, op, a, b)
         elif op in dyn:
-            s_operation.dynamic(self, func, op, a, b)
+            s_operation.dynamic(self, func[0], func[1], a, b)
         # elif op in sins:
         #     u_operation.singular(self, func, op, a)
         # elif op in binbit:
