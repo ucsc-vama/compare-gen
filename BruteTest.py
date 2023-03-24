@@ -7,11 +7,12 @@ import getopt, sys
 
 class BruteTest:
 
-    def testpossible(self, varsize):
+    def testpossible(self, type, varsize):
         for op in config.list_two:
             for i in range(0,varsize):
                 for j in range(0,varsize):
-                    self.calc_variables(str(self.ts)+"/brute", op, i, j)
+                    self.calc_variables(type, op, i, j)
+                    print(str(i) + " " + str(j))
         # for op in config.list_bitwise:
         #     for i in range(0,varsize):
         #         for j in range(5):
@@ -28,33 +29,34 @@ class BruteTest:
         #     for i in range(0, varsize):
         #         self.calc_variables(str(self.ts)+"/brute", op, i)
 
-    def testthreeparm(self,  maxbitsize):
-        for i in range(2,maxbitsize):
-            isize = config.getbitsize(i)
-            for h in range(0, isize):
-                for l in range(0, h):#change to hize+1
-                    self.calc_variables(str(self.ts)+"/brute", "bits", i,h,l)
+    # def testthreeparm(self,  maxbitsize):
+    #     for i in range(2,maxbitsize):
+    #         isize = config.getbitsize(i)
+    #         for h in range(0, isize):
+    #             for l in range(0, h):#change to hize+1
+    #                 self.calc_variables(str(self.ts)+"/brute", "bits", i,h,l)
 
 if __name__=="__main__":
     t = test.runtests()
-    subprocess.call(["mkdir", "testcases/"+str(t.ts)+"/brute"])
     arglist = sys.argv[1:]
-    options = "s:h"
-    long_options = ["size=", "help"]
+    options = "t:s:h"
+    long_options = ["type=", "size=", "help"]
+    type = "uint"
     maxbit = 1
     try:
         arguments, values = getopt.getopt(arglist, options, long_options)
         for currentArgument, currentValue in arguments:
             if currentArgument in ("-s", "--size"):
-                maxbit = int(currentValue)
+                maxbit = 1<<int(currentValue) -1
+            elif currentArgument in ("-t", "--t"):
+                type = currentValue
             elif currentArgument in ("-h", "--help"):
-                print("usage: BruteTest.py -s <max value>")
+                print("usage: BruteTest.py -t [uint/sint] -s <max value>")
                 sys.exit()
     except getopt.error as err:
         print (str(err))
 
-    maxbit = 1<<maxbit -1
 
-    BruteTest.testpossible(t, maxbit)
+    BruteTest.testpossible(t, type, maxbit)
     print("====================")
     t.printresult()

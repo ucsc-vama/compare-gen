@@ -7,8 +7,8 @@ using namespace std;
 
 int main() {
 
-    SInt<4> s0("0x0");
-	SInt<4> s1(0x1);
+    SInt<1> s0("0x0");
+	SInt<1> s1(0x1);
     SInt<4> s2(0x2);
 	SInt<4> s3(0x3);
     SInt<4> s4(0x4);
@@ -74,7 +74,13 @@ int main() {
     // cout << (b80s.head<0>()) << endl;
     // cout << (b80u.tail<80>()) << endl;
 
-    cout << (s1 >> UInt<2>(2)) << endl;
-     
+    // cout << (s1 >> UInt<2>(2)) << endl;
+    // SInt<1> a("0x0");
+	// SInt<1> b("0x1");
+    // assert(a.cat(b) == SInt<2>("0x1"));
+	SInt<1> a("0x0");
+	SInt<1> b("0x1");
+	assert((a&b) == UInt<1>("0x0"));
+
     return 0;
 }
