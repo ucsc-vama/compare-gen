@@ -22,4 +22,4 @@ jobs:
         python -m pip install --upgrade pip
     - name: run test
       run: |
-        python3 BruteTest.py -t sint -s 3 &> outfile.txt
+        python BruteTest.py -t sint -s 3 &> outfile.txt
