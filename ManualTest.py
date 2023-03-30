@@ -9,18 +9,19 @@ import getopt, sys
 class ManualTest:
 
     def test(t, type, a=0, b="+", c=0, d=0):
+        t.type = type
         if b in config.list_two:
-            t.calc_variables(type, b, int(a), int(c))
+            t.calc_variables(b, int(a), int(c))
         elif b in config.list_bitwise:
-            t.calc_variables(type, b, int(a), int(c))
+            t.calc_variables(b, int(a), int(c))
         elif b in config.headtail:
-            t.calc_variables(type, b, int(a), int(c))
+            t.calc_variables(b, int(a), int(c))
         elif a in config.binbit:
-            t.calc_variables(type, a, int(b))
+            t.calc_variables(a, int(b))
         elif a in config.sins:
-            t.calc_variables(type, a, int(b))
+            t.calc_variables(a, int(b))
         elif b in config.threeparm:
-            t.calc_variables(type, b, int(a), int(c), int(d))
+            t.calc_variables(b, int(a), int(c), int(d))
         else:
             print("invalid operator")
 

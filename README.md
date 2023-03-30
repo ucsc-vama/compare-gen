@@ -4,7 +4,7 @@ This repo is designed to combine the functionality of [firrtl-operations](https:
 
 run bruteforce test:
 ```
-    $ python Brutetest.py -t sint -s 2
+    $ python3 BruteTest.py -t sint -s 3 &> outfile.txt
 ```
 
 NOTES:
@@ -30,5 +30,13 @@ NOTES:
 	cout << (a<b) << endl;
 	// should be true
 	// but prints false
+```
+
+* comparison issue
+```
+  SInt<2> a(0x3);
+  cout << (a >> UInt<2>("0x2"))  << endl;
+  cout << SInt<2>(0x3) << endl;
+	cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
 ```
 

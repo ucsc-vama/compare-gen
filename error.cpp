@@ -74,13 +74,16 @@ int main() {
     // cout << (b80s.head<0>()) << endl;
     // cout << (b80u.tail<80>()) << endl;
 
-    // cout << (s1 >> UInt<2>(2)) << endl;
-    // SInt<1> a("0x0");
-	// SInt<1> b("0x1");
-    // assert(a.cat(b) == SInt<2>("0x1"));
-	SInt<1> a("0x0");
-	SInt<1> b("0x1");
-	assert((a&b) == UInt<1>("0x0"));
+    // SInt<2> a(0x3);
+    // cout << (a >> UInt<2>("0x2"))  << endl;
+    // cout << SInt<2>(0x3) << endl;
+	// cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
+
+	SInt<2> a("0x1");
+	SInt<2> b("0x2");
+	// assert(a-b == SInt<3>("0x7"));
+    cout << a/b << endl;
+
 
     return 0;
 }

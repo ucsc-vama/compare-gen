@@ -23,6 +23,11 @@ binbit = ["andr", "orr", "xorr"]
 vlv = ["cat"]
 threeparm = ["bits"]
 
+opConvert = {
+    "dshl": "<<",
+    "dshr": ">>"
+}
+
 class u_operation:
     u_ops = {}
     u_ops["+"] = uint.model_uint.uint_add
@@ -39,8 +44,8 @@ class u_operation:
     u_ops["pad"] = uint.model_uint.uint_pad
     u_ops["shl"] = uint.model_uint.uint_shl
     u_ops["shr"] = uint.model_uint.uint_shr
-    u_ops["<<"] = uint.model_uint.uint_dshl
-    u_ops[">>"] = uint.model_uint.uint_dshr
+    u_ops["dshl"] = uint.model_uint.uint_dshl
+    u_ops["dshr"] = uint.model_uint.uint_dshr
     u_ops["~"] = uint.model_uint.uint_not
     u_ops["&"] = uint.model_uint.uint_and
     u_ops["|"] = uint.model_uint.uint_or
@@ -148,8 +153,8 @@ class s_operation:
     s_ops["pad"] = sint.model_sint.sint_pad
     s_ops["shl"] = sint.model_sint.sint_shl
     s_ops["shr"] = sint.model_sint.sint_shr
-    s_ops["<<"] = sint.model_sint.sint_dshl
-    s_ops[">>"] = sint.model_sint.sint_dshr
+    s_ops["dshl"] = sint.model_sint.sint_dshl
+    s_ops["dshr"] = sint.model_sint.sint_dshr
     s_ops["~"] = sint.model_sint.sint_not
     s_ops["&"] = sint.model_sint.sint_and
     s_ops["|"] = sint.model_sint.sint_or
@@ -169,7 +174,7 @@ class s_operation:
         f.write("\tSInt<" + str(num.bitsize) + "> u" + str(num.value) + "(\"" + str(hex(num.value)) + "\");\n")
 
     def declareOneVariable(f, num: sint.model_sint, name: str):
-        f.write("\tSInt<" + str(num.bitsize) + "> " + name + "(\"" + str(hex(num.value)) + "\");\n")
+        f.write("\tSInt<" + str(num.bitsize) + "> " + name + "(\"" + str(hex(num.realval)) + "\");\n")
 
     #	assert(u0+u0 == SInt<1>("0x0"));
     def binary(file, func, op: str, a, b):
@@ -195,19 +200,20 @@ class s_operation:
 
     #	assert(u59221.pad<3>() == UInt<16>("0xe755"));
     def bitwise(file, func, op: str, a: int, n):
-        # func = operation.u_ops[op]
         sint_a = sint.model_sint(a)
         result = func(sint_a, n)
-        file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        outtype = "SInt"
+        if op == "bits":
+            outtype = "UInt"
+        file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == "+outtype+"<"+str(result.bitsize)+">(\""+str(hex(result.realval))+"\"));\n")
 
         #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
     def dynamic(file, func, op: str, a: int, b):
-        # func = operation.u_ops[op]
         sint_a = sint.model_sint(a)
         b_size = getbitsize(b)
-        sint_b = sint.model_sint(b, b_size)
+        sint_b = uint.model_uint(b, b_size)
         result = func(sint_a, sint_b)
-        file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(sint_b.value))+"\")) == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(sint_b.value))+"\")) == SInt<"+str(result.bitsize)+">(\""+str(hex(result.realval))+"\"));\n")
 
     #   assert((u4.cat(u5)) == UInt<1>("0x1"));
     def vlv(file, func, op: str, a: int, b: int):
@@ -255,7 +261,7 @@ class file:
         elif op in bits:
             u_operation.bitwise(self, func, op, a, b)
         elif op in dyn:
-            u_operation.dynamic(self, func, op, a, b)
+            u_operation.dynamic(self, func, opConvert[op], a, b)
         elif op in sins:
             u_operation.singular(self, func, op, a)
         elif op in binbit:
@@ -277,7 +283,7 @@ class file:
         elif op in bits:
             s_operation.bitwise(self, func, op, a, b)
         elif op in dyn:
-            s_operation.dynamic(self, func, op, a, b)
+            s_operation.dynamic(self, func, opConvert[op], a, b)
         # elif op in sins:
         #     u_operation.singular(self, func, op, a)
         # elif op in binbit:
