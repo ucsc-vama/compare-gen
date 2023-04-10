@@ -8,22 +8,23 @@ import getopt, sys
 class BruteTest:
 
     def testpossible(self,varsize):
-        for op in ["+", "-", "*", "cat"]:
-            for i in range(0,varsize):
-                for j in range(0, varsize):
-                    self.calc_variables(op, i, j)
-        for op in ["==", "!=", "/", "%", "&", "|", "^"]:
-            for i in range(0,varsize):
-                 self.calc_variables(op, i, i)
+        # for op in ["+", "-", "*", "cat"]:
+        #     for i in range(0,varsize):
+        #         for j in range(0, varsize):
+        #             self.calc_variables(op, i, j)
+        # for op in ["==", "!=", "/", "%", "&", "|", "^"]:
+        #     for i in range(0,varsize):
+        #          self.calc_variables(op, i, i)
         # for op in config.list_bitwise:
         #     for i in range(0,varsize):
         #         for j in range(i):
-        #             self.calc_variables(type, op, i, j)
-        # for op in config.headtail:
-        #     for i in range(0,varsize):
-        #         isize = config.getbitsize(i)
-        #         for j in range(0,isize):
-        #             self.calc_variables(str(self.ts)+"/brute", op, i, j)
+        #             print(op, i, j)
+        #             self.calc_variables(op, i, j)
+        for op in config.headtail:
+            for i in range(0,varsize):
+                isize = config.getbitsize(i)
+                for j in range(0,isize):
+                    self.calc_variables(op, i, j)
         # for op in config.binbit:
         #     for i in range(0,varsize):
         #         self.calc_variables(str(self.ts)+"/brute", op, i)

@@ -79,11 +79,13 @@ int main() {
     // cout << SInt<2>(0x3) << endl;
 	// cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
 
-	SInt<2> a("0x1");
-	SInt<2> b("0x2");
-	// assert(a-b == SInt<3>("0x7"));
-    cout << a/b << endl;
-
+    SInt<3> a("0x6");
+    cout << (a >> UInt<1>("0x0")) << endl;
+    cout << (a >> UInt<1>("0x1")) << endl;
+    cout << (a >> UInt<2>("0x2")) << endl;
+    cout << "here" << (a >> UInt<2>("0x3")) << endl;
+    cout << (a >> UInt<3>("0x4")) << endl;
+    cout << (a >> UInt<3>("0x5")) << endl;
 
     return 0;
 }

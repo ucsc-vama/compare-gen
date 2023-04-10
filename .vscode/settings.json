@@ -4,7 +4,8 @@
     ],
     "files.associations": {
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "random": "cpp"
     },
     "cmake.configureOnOpen": true
 }

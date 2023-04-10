@@ -202,18 +202,18 @@ class s_operation:
     def bitwise(file, func, op: str, a: int, n):
         sint_a = sint.model_sint(a)
         result = func(sint_a, n)
-        outtype = "SInt"
-        if op == "bits":
-            outtype = "UInt"
-        file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == "+outtype+"<"+str(result.bitsize)+">(\""+str(hex(result.realval))+"\"));\n")
+        if result.type == "uint":
+            file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == UInt<"+str(result.bitsize)+">(\""+str(hex(result.value))+"\"));\n")
+        else:
+            file.f.write("\tassert(a"+"."+op+"<"+str(n)+">() == SInt<"+str(result.bitsize)+">(\""+str(hex(result.realval))+"\"));\n")
 
-        #   assert((u15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
+        #   assert((s15 >> UInt<3>("0x4")) == UInt<4>("0x0"));
     def dynamic(file, func, op: str, a: int, b):
         sint_a = sint.model_sint(a)
         b_size = getbitsize(b)
-        sint_b = uint.model_uint(b, b_size)
-        result = func(sint_a, sint_b)
-        file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(sint_b.value))+"\")) == SInt<"+str(result.bitsize)+">(\""+str(hex(result.realval))+"\"));\n")
+        uint_b = uint.model_uint(b, b_size)
+        result = func(sint_a, uint_b)
+        file.f.write("\tassert((a"+" "+op+" UInt<"+str(b_size)+">(\""+str(hex(uint_b.value))+"\")) == SInt<"+str(result.bitsize)+">(\""+str(hex(result.realval))+"\"));\n")
 
     #   assert((u4.cat(u5)) == UInt<1>("0x1"));
     def vlv(file, func, op: str, a: int, b: int):
