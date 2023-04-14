@@ -40,4 +40,4 @@ NOTES:
 	cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
 ```
 
-* head operation cannot tail operations of n=0
+* head operation cannot run when n=0

@@ -80,12 +80,14 @@ int main() {
 	// cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
 
     SInt<3> a("0x6");
-    cout << (a >> UInt<1>("0x0")) << endl;
-    cout << (a >> UInt<1>("0x1")) << endl;
-    cout << (a >> UInt<2>("0x2")) << endl;
-    cout << "here" << (a >> UInt<2>("0x3")) << endl;
-    cout << (a >> UInt<3>("0x4")) << endl;
-    cout << (a >> UInt<3>("0x5")) << endl;
+    // cout << (a >> UInt<1>("0x0")) << endl;
+    // cout << (a >> UInt<1>("0x1")) << endl;
+    // cout << (a >> UInt<2>("0x2")) << endl;
+    // cout << "here" << (a >> UInt<2>("0x3")) << endl;
+    // cout << (a >> UInt<3>("0x4")) << endl;
+    // cout << (a >> UInt<3>("0x5")) << endl;
+
+    cout << a.tail<0>() << endl;
 
     return 0;
 }
