@@ -14,8 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
+        repository: ucsc-vama/compare-gen
+        ref: master
         token: ${{ secrets.ACTION_TOK }}
-        submodules: recursive
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
