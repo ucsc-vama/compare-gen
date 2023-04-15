@@ -17,6 +17,7 @@ jobs:
         repository: ucsc-vama/compare-gen
         ref: master
         token: ${{ secrets.CLASSIC_ACTION_TOK }}
+        submodules: 'recursive'
     - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
@@ -28,16 +29,8 @@ jobs:
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: fetch submodule
       run: git submodule update --init --recursive
-      with:
-        repository: ucsc-vama/compare-gen
-        ref: master
-        token: ${{ secrets.CLASSIC_ACTION_TOK }}
     - name: update remote submodule
       run: git submodule update --recursive --remote
-      with:
-        repository: ucsc-vama/compare-gen
-        ref: master
-        token: ${{ secrets.CLASSIC_ACTION_TOK }}
     - name: run test
       run: |
         python3 BruteTest.py -t uint -s 3
