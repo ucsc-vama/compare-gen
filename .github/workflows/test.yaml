@@ -30,7 +30,7 @@ jobs:
     - name: fetch submodule
       run: git submodule update --init --recursive
     - name: update remote submodule
-      run: git submodule update --recursive --remote
+      run: git submodule update --recursive
     - name: run test
       run: |
         python3 BruteTest.py -t uint -s 3
