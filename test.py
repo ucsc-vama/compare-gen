@@ -7,7 +7,6 @@ sys.path.insert(1, '/firrtl-operations/')
 import uint
 from BruteTest import *
 from RandomTest import *
-from FuzzyTest import *
 import config
 from datetime import datetime
 from math import * 
