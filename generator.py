@@ -295,7 +295,6 @@ class file:
 
     def top(self, type):#header and main
         if type == "uint":
-            # self.f.write("#include \"../../../firrtl-sig/uint.h\"\n")
             self.f.write("#include \"../../firrtl-sig/uint.h\"\n")
         else:
             self.f.write("#include \"../../firrtl-sig/sint.h\"\n")
