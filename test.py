@@ -15,7 +15,7 @@ class runtests:
 
     def __init__(self):
         self.ts = datetime.timestamp(datetime.now())
-        subprocess.call(["mkdir", "testcases/"+str(self.ts)+"/"])
+        subprocess.call(["mkdir", "-p", "testcases/"+str(self.ts)+"/"])
         self.completed = 0
         self.count = 0
         self.clear = False
