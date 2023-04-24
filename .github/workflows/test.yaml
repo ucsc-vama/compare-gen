@@ -20,12 +20,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-    - name: clone compare-gen
-      run: git clone https://github.com/ucsc-vama/firrtl-operations.git
+    - name: fetch submodule
+      run: git submodule update --init --remote
+    - name: update remote submodule
+      run: git submodule update --recursive --remote
     - name: see folder
-      working-directory: ./app
+      working-directory: ./firrtl-operations
       run: |
         ls
-      - name: run unit test
-        run: |
-          python3 test_uint.py
+    - name: run unit test
+      working-directory: ./firrtl-operations
+      run: |
+        python3 test_uint.py
