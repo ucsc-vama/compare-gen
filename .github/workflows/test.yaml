@@ -20,17 +20,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-    - name: clone compar-gen
-      run: git clone https://github.com/ucsc-vama/compare-gen.git
+    - name: clone compare-gen
+      run: git clone https://github.com/ucsc-vama/firrtl-operations.git
     - name: go in folder
-      run: cd compare-gen
-    - name: fetch submodule
-      run: git submodule update --init --remote
-    - name: update remote submodule
-      run: git submodule update --recursive --remote
+      run: cd firrtl-operations
     - name: show files
       run: |
         ls
     - name: run unit test
       run: |
-        python3 BruteTest.py -t uint -s 3
+        python3 test_uint.py
