@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-    - name: fetch submodule
+    - name: clone compar-gen
       run: git clone https://github.com/ucsc-vama/compare-gen.git
     - name: go in folder
       run: cd compare-gen
@@ -33,5 +33,4 @@ jobs:
         ls
     - name: run unit test
       run: |
-        cd compare-gen
         python3 BruteTest.py -t uint -s 3
