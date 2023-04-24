@@ -22,11 +22,10 @@ jobs:
         python -m pip install --upgrade pip
     - name: clone compare-gen
       run: git clone https://github.com/ucsc-vama/firrtl-operations.git
-    - name: go in folder
-      run: cd firrtl-operations
-    - name: show files
+    - name: see folder
+      working-directory: ./app
       run: |
         ls
-    - name: run unit test
-      run: |
-        python3 test_uint.py
+      - name: run unit test
+        run: |
+          python3 test_uint.py
