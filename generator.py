@@ -6,6 +6,7 @@ from random import randint
 sys.path.insert(1, str('./firrtl-operations'))
 import uint
 import sint
+import config
 
 def getbitsize(var):
     if var == 0:
@@ -295,9 +296,9 @@ class file:
 
     def top(self, type):#header and main
         if type == "uint":
-            self.f.write("#include \"../../../../firrtl-sig/uint.h\"\n")
+            self.f.write(config.UINTLOCATION)
         else:
-            self.f.write("#include \"../../../../firrtl-sig/sint.h\"\n")
+            self.f.write(config.SINTLOCATION)
         self.f.write("#include <assert.h>\n")
         self.f.write("int main() {\n\n")
 
