@@ -6,7 +6,6 @@ from random import randint
 sys.path.insert(1, str('./firrtl-operations'))
 import uint
 import sint
-import config
 
 def getbitsize(var):
     if var == 0:
@@ -295,10 +294,16 @@ class file:
             # u_operation.threeparm(self, func, op, a, b, c)
 
     def top(self, type):#header and main
-        if type == "uint":
-            self.f.write(config.UINTLOCATION)
+        if os.getenv("GITHUB_ACTIONS"):
+            if type == "uint":
+                self.f.write("#include \"../../../../firrtl-sig/uint.h\"\n")
+            else:
+                self.f.write("#include \"../../../../firrtl-sig/sint.h\"\n")
         else:
-            self.f.write(config.SINTLOCATION)
+            if type == "uint":
+                self.f.write("#include \"../../../firrtl-sig/uint.h\"\n")
+            else:
+                self.f.write("#include \"../../../firrtl-sig/sint.h\"\n")
         self.f.write("#include <assert.h>\n")
         self.f.write("int main() {\n\n")
 

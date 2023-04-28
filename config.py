@@ -14,5 +14,3 @@ binbit = ["andr", "orr", "xorr"]
 sins = ["~"]
 threeparm = ["bits"]
 
-UINTLOCATION = "#include \"../../../firrtl-sig/uint.h\"\n"
-SINTLOCATION = "#include \"../../../firrtl-sig/sint.h\"\n"
