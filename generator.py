@@ -286,8 +286,8 @@ class file:
             s_operation.dynamic(self, func, opConvert[op], a, b)
         # elif op in sins:
         #     u_operation.singular(self, func, op, a)
-        # elif op in binbit:
-        #     u_operation.binarybitwise(self, func, op, a)
+        elif op in binbit:#now working on
+            u_operation.binarybitwise(self, func, op, a)
         elif op in vlv:
             s_operation.vlv(self, func, op, a, b)
         # elif op in threeparm:
