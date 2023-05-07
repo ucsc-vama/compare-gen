@@ -29,7 +29,7 @@ opConvert = {
 }
 
 class u_operation:
-    u_ops = {}
+    u_ops = {}#27
     u_ops["+"] = uint.model_uint.uint_add
     u_ops["-"] = uint.model_uint.uint_sub
     u_ops["*"] = uint.model_uint.uint_mul

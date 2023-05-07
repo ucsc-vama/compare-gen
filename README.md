@@ -41,3 +41,13 @@ NOTES:
 ```
 
 * head operation cannot run when n=0
+
+* & operation resulting in bit 0. should the result have bitsize 0? or have max(w_a, w_b)?
+
+* | operator
+```
+	UInt<1> a("0x0");
+	UInt<2> b("0x2");
+	// assert((a|b) == UInt<2>("0x2"));
+	cout << (a|b) << endl;
+```

@@ -1,5 +1,5 @@
-#include "./firrtl-sig/uint.h"
-#include "./firrtl-sig/sint.h"
+#include "../firrtl-sig/uint.h"
+#include "../firrtl-sig/sint.h"
 #include <iostream>
 #include <assert.h>
 #include <stdlib.h>
@@ -79,15 +79,20 @@ int main() {
     // cout << SInt<2>(0x3) << endl;
 	// cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
 
-    SInt<3> a("0x6");
+    // SInt<3> a("0x6");
     // cout << (a >> UInt<1>("0x0")) << endl;
     // cout << (a >> UInt<1>("0x1")) << endl;
     // cout << (a >> UInt<2>("0x2")) << endl;
     // cout << "here" << (a >> UInt<2>("0x3")) << endl;
     // cout << (a >> UInt<3>("0x4")) << endl;
     // cout << (a >> UInt<3>("0x5")) << endl;
+    // cout << a.tail<0>() << endl;
 
-    cout << a.tail<0>() << endl;
+	UInt<1> a("0x0");
+	UInt<2> b("0x2");
+	// assert((a|b) == UInt<2>("0x2"));
+	cout << (a|b) << endl;
+    // cout << ((a^b) == UInt<2>("0x3")) << endl;
 
     return 0;
 }

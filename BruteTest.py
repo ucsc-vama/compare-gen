@@ -8,34 +8,35 @@ import getopt, sys
 class BruteTest:
 
     def testpossible(self,varsize):
-        for op in ["+", "-", "*", "cat"]:
-            for i in range(0,varsize):
-                for j in range(0, varsize):
-                    self.calc_variables(op, i, j)
+        # for op in ["+", "-", "*", "cat"]:
+        #     for i in range(0,varsize):
+        #         for j in range(0, varsize):
+        #             self.calc_variables(op, i, j)
         # for op in ["==", "!=", "/", "%", "&", "|", "^"]:
         for op in ["==", "!=", "/", "%", "&", "|", "^", "<", "<=", ">", ">="]:
             for i in range(0,varsize):
-                 self.calc_variables(op, i, i)
-        for op in ["pad", "shl", "shr", "dshl", "dshr"]:
-            for i in range(0,varsize):
-                for j in range(i):
+                for j in range(0, varsize):
                     self.calc_variables(op, i, j)
-        for op in ["tail", "head"]:
-            for i in range(0,varsize):
-                isize = config.getbitsize(i)
-                for j in range(0,isize):
-                    self.calc_variables(op, i, j)
-        for op in ["andr", "orr", "xorr"]:
-            for i in range(0,varsize):
-                self.calc_variables(op, i)
-        for op in ["~"]:
-            for i in range(0, varsize):
-                self.calc_variables(op, i)
-        for i in range(2,varsize):
-            isize = config.getbitsize(i)
-            for h in range(1, isize):
-                for l in range(0, h):#change to hize+1
-                    self.calc_variables("bits", i,h,l)
+        # for op in ["pad", "shl", "shr", "dshl", "dshr"]:
+        #     for i in range(0,varsize):
+        #         for j in range(i):
+        #             self.calc_variables(op, i, j)
+        # for op in ["tail", "head"]:
+        #     for i in range(0,varsize):
+        #         isize = config.getbitsize(i)
+        #         for j in range(0,isize):
+        #             self.calc_variables(op, i, j)
+        # for op in ["andr", "orr", "xorr"]:
+        #     for i in range(0,varsize):
+        #         self.calc_variables(op, i)
+        # for op in ["~"]:
+        #     for i in range(0, varsize):
+        #         self.calc_variables(op, i)
+        # for i in range(2,varsize):
+        #     isize = config.getbitsize(i)
+        #     for h in range(1, isize):
+        #         for l in range(0, h):#change to hize+1
+        #             self.calc_variables("bits", i,h,l)
 
     # def testthreeparm(self,  maxbitsize):
 
