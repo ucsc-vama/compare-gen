@@ -88,10 +88,10 @@ int main() {
     // cout << (a >> UInt<3>("0x5")) << endl;
     // cout << a.tail<0>() << endl;
 
-	UInt<1> a("0x0");
+	UInt<2> a("0x3");
 	UInt<2> b("0x2");
-	// assert((a|b) == UInt<2>("0x2"));
-	cout << (a|b) << endl;
+	// assert(0 == (a<b));
+	cout << (a<b) << endl;
     // cout << ((a^b) == UInt<2>("0x3")) << endl;
 
     return 0;

@@ -5,51 +5,50 @@ import subprocess
 # import threading
 import getopt, sys
 
-class BruteTest:
+class BruteTest: #27
 
     def testpossible(self,varsize):
-        # for op in ["+", "-", "*", "cat"]:
-        #     for i in range(0,varsize):
-        #         for j in range(0, varsize):
-        #             self.calc_variables(op, i, j)
-        # for op in ["==", "!=", "/", "%", "&", "|", "^"]:
+        for op in ["+", "-", "*", "cat"]:
+            for i in range(0,varsize):
+                for j in range(0, varsize):
+                    self.calc_variables(op, i, j)
         for op in ["==", "!=", "/", "%", "&", "|", "^", "<", "<=", ">", ">="]:
             for i in range(0,varsize):
                 for j in range(0, varsize):
                     self.calc_variables(op, i, j)
-        # for op in ["pad", "shl", "shr", "dshl", "dshr"]:
-        #     for i in range(0,varsize):
-        #         for j in range(i):
-        #             self.calc_variables(op, i, j)
-        # for op in ["tail", "head"]:
-        #     for i in range(0,varsize):
-        #         isize = config.getbitsize(i)
-        #         for j in range(0,isize):
-        #             self.calc_variables(op, i, j)
-        # for op in ["andr", "orr", "xorr"]:
-        #     for i in range(0,varsize):
-        #         self.calc_variables(op, i)
-        # for op in ["~"]:
-        #     for i in range(0, varsize):
-        #         self.calc_variables(op, i)
-        # for i in range(2,varsize):
-        #     isize = config.getbitsize(i)
-        #     for h in range(1, isize):
-        #         for l in range(0, h):#change to hize+1
-        #             self.calc_variables("bits", i,h,l)
+        for op in ["pad", "shl", "shr", "dshl", "dshr"]:
+            for i in range(0,varsize):
+                for j in range(i):
+                    self.calc_variables(op, i, j)
+        for op in ["tail", "head"]:
+            for i in range(0,varsize):
+                isize = config.getbitsize(i)
+                for j in range(0,isize):
+                    self.calc_variables(op, i, j)
+        for op in ["andr", "orr", "xorr"]:
+            for i in range(0,varsize):
+                self.calc_variables(op, i)
+        for op in ["~"]:
+            for i in range(0, varsize):
+                self.calc_variables(op, i)
+        for i in range(2,varsize):
+            isize = config.getbitsize(i)
+            for h in range(1, isize):
+                for l in range(0, h):#change to hize+1
+                    self.calc_variables("bits", i,h,l)
 
     # def testthreeparm(self,  maxbitsize):
 
 if __name__=="__main__":
     t = test.runtests()
     arglist = sys.argv[1:]
-    options = "t:s:ch"
-    long_options = ["type=", "size=", "clear", "help"]
+    options = "t:n:ch"
+    long_options = ["type=", "number=", "clear", "help"]
     maxbit = 1
     try:
         arguments, values = getopt.getopt(arglist, options, long_options)
         for currentArgument, currentValue in arguments:
-            if currentArgument in ("-s", "--size"):
+            if currentArgument in ("-n", "--number"):
                 maxbit = 1<<int(currentValue) -1
             elif currentArgument in ("-t", "--type"):
                 t.type = currentValue
