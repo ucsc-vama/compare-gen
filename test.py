@@ -18,7 +18,7 @@ class runtests:
         subprocess.call(["mkdir", "-p", "testcases/"+str(self.ts)+"/"])
         self.completed = 0
         self.count = 0
-        self.clear = False #change this to True/False
+        self.clear = True #change this to True/False
         self.type = "uint"
         print("testcases/"+str(self.ts)+"/")
 
