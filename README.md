@@ -12,7 +12,7 @@ File structure:
 		├── README.md
 		└── ...
 ```
-
+Must have firrtl-sig cloned in the same level as compare-gen
 
 run bruteforce test:
 ```
