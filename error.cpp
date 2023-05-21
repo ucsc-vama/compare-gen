@@ -87,12 +87,9 @@ int main() {
     // cout << (a >> UInt<3>("0x4")) << endl;
     // cout << (a >> UInt<3>("0x5")) << endl;
     // cout << a.tail<0>() << endl;
-
-	UInt<2> a("0x3");
-	UInt<2> b("0x2");
-	// assert(0 == (a<b));
-	cout << (a<b) << endl;
-    // cout << ((a^b) == UInt<2>("0x3")) << endl;
+	UInt<2> a("0x2");
+	// assert((a.bits<1,1>()) == UInt<0>("0x0"));
+    cout << (a.bits<1,0>()) << endl;
 
     return 0;
 }

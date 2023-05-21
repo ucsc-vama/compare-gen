@@ -33,8 +33,8 @@ class BruteTest: #27
                 self.calc_variables(op, i)
         for i in range(2,varsize):
             isize = config.getbitsize(i)
-            for h in range(1, isize):
-                for l in range(0, h):#change to hize+1
+            for h in range(0, isize):
+                for l in range(0, h+1):#change to hize+1
                     self.calc_variables("bits", i,h,l)
 
     # def testthreeparm(self,  maxbitsize):
@@ -42,13 +42,13 @@ class BruteTest: #27
 if __name__=="__main__":
     t = test.runtests()
     arglist = sys.argv[1:]
-    options = "t:n:ch"
-    long_options = ["type=", "number=", "clear", "help"]
+    options = "t:s:ch"
+    long_options = ["type=", "size=", "clear", "help"]
     maxbit = 1
     try:
         arguments, values = getopt.getopt(arglist, options, long_options)
         for currentArgument, currentValue in arguments:
-            if currentArgument in ("-n", "--number"):
+            if currentArgument in ("-s", "--size"):
                 maxbit = 1<<int(currentValue) -1
             elif currentArgument in ("-t", "--type"):
                 t.type = currentValue

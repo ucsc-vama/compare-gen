@@ -9,20 +9,6 @@ run bruteforce test:
 
 NOTES:
 
-* different bitlength operation doesnt work for "^", "|", "&", "<", ">", ">=", "<=", "=="
->>>
-  UInt<2> a("0x2");
-	UInt<1> b("0x1");
-	assert((a|b) == UInt<2>("0x3"));
->>>
->>>
-	UInt<2> a("0x2");
-	UInt<1> b("0x1");
-	assert((a&b) == UInt<2>("0x0"));
->>>
-
-* bit extraction operation dont work when lower and higher is equal
-
 * lt/gt incorrrect result?
 ```
 	SInt<4> a("0x9");
@@ -32,22 +18,10 @@ NOTES:
 	// but prints false
 ```
 
-* comparison issue
+* comparison issue. two are different
 ```
   SInt<2> a(0x3);
   cout << (a >> UInt<2>("0x2"))  << endl;
   cout << SInt<2>(0x3) << endl;
 	cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
-```
-
-* head operation cannot run when n=0
-
-* & operation resulting in bit 0. should the result have bitsize 0? or have max(w_a, w_b)?
-
-* | operator
-```
-	UInt<1> a("0x0");
-	UInt<2> b("0x2");
-	// assert((a|b) == UInt<2>("0x2"));
-	cout << (a|b) << endl;
 ```
