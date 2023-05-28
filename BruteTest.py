@@ -42,13 +42,13 @@ class BruteTest: #27
 if __name__=="__main__":
     t = test.runtests()
     arglist = sys.argv[1:]
-    options = "t:s:ch"
-    long_options = ["type=", "size=", "clear", "help"]
+    options = "t:m:ch"
+    long_options = ["type=", "maxbit=", "clear", "help"]
     maxbit = 1
     try:
         arguments, values = getopt.getopt(arglist, options, long_options)
         for currentArgument, currentValue in arguments:
-            if currentArgument in ("-s", "--size"):
+            if currentArgument in ("-m", "--maxbit"):
                 maxbit = 1<<int(currentValue) -1
             elif currentArgument in ("-t", "--type"):
                 t.type = currentValue

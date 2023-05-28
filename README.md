@@ -6,17 +6,17 @@ This repo is designed to combine the functionality of [firrtl-operations](https:
 File structure:
 ```
 ├── Firrtl-sig
-│		├── README.md
-│		└── ...
+│	├── README.md
+│	└── ...
 └── Compare-gen
-		├── README.md
-		└── ...
+	├── README.md
+	└── ...
 ```
 Must have firrtl-sig cloned in the same level as compare-gen
 
 run bruteforce test:
 ```
-    $ python3 BruteTest.py -t sint -s 3 &> outfile.txt
+    $ python3 BruteTest.py -t sint -m 3 &> outfile.txt
 ```
 
 NOTES:
