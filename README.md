@@ -20,20 +20,3 @@ run bruteforce test:
 ```
 
 NOTES:
-
-* lt/gt incorrrect result?
-```
-	SInt<4> a("0x9");
-	SInt<4> b("0x1");
-	cout << (a<b) << endl;
-	// should be true
-	// but prints false
-```
-
-* comparison issue. two are different
-```
-  SInt<2> a(0x3);
-  cout << (a >> UInt<2>("0x2"))  << endl;
-  cout << SInt<2>(0x3) << endl;
-	cout << ((a >> UInt<2>("0x2")) == SInt<2>(0x3)) << endl;
-```
